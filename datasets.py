@@ -36,3 +36,17 @@ class EvalDataset(Dataset): # 验证集的处理
     def __len__(self):
         with h5py.File(self.h5_file, 'r') as f:
             return len(f['lr']) # 返回元素个数
+
+
+class TrainDataset2(Dataset):
+    # 这里通常是构造所有数据的地址列表
+    def __init__(self):
+
+
+    # 这里定义获取数据的方法
+    def __getitem__(self, index):
+    
+
+    # 这里返回数据的数量
+    def __len__(self):
+            
