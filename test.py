@@ -39,6 +39,7 @@ if __name__ == '__main__':
         else:
             raise KeyError(n)
 
+    # model.train()是启用BN和dropout，model.eval是关闭train和dropout即保证BN层的均值和方差不变
     model.eval()
     
     # 读取图像文件并转换为RGB

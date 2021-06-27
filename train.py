@@ -68,6 +68,7 @@ if __name__ == '__main__':
                                   num_workers=args.num_workers, # 参与dataload的进程数
                                   pin_memory=True, # pin_memory为True，则data loader将会在返回它们之前，将tensors拷贝到CUDA中的固定内存（CUDA pinned memory）中
                                   drop_last=True) # drop_last为True，则将最后不足batch size的数据丢弃，默认为false
+   
     # 初始化eval数据集
     eval_dataset = EvalDataset(args.eval_file)
     # 加载eval数据
@@ -78,20 +79,19 @@ if __name__ == '__main__':
     best_psnr = 0.0
 
     for epoch in range(args.num_epochs):
-
     ##################训练集###################
-
         # 设置为训练模式，train是模型训练的入口
         model.train()
 
         # 采用自定义的AverageMeter()来管理变量的更新
         epoch_losses = AverageMeter()
 
-        # 将代码的执行进度用进度条表现出来
+        # 将代码的执行进度用进度条表现出来，注意这里是batch_size，不是patch_size
         with tqdm(total=(len(train_dataset) - len(train_dataset) % args.batch_size)) as t:
             t.set_description('epoch: {}/{}'.format(epoch, args.num_epochs - 1)) # 用于输出信息
 
             for data in train_dataloader:
+                # 读取数据的时候是以元组的形式获得了低/高分辨率的图像
                 inputs, labels = data
 
                 # 这里表示将获得的inputs/labels数据拷贝一份到device上去，之后的运算都在GPU上运行

@@ -12,8 +12,10 @@ class TrainDataset(Dataset):# 训练集的处理
 
     def __getitem__(self, idx):
         with h5py.File(self.h5_file, 'r') as f:#读取文件
-            #np.expand_dims(a, axis=0)表示在多维数组0维，也就是最外围，添加数据，数组(1,2,3)一共有0、1、2、3四个维度可以添加数据；0维度就是直接给原来数组外面加括号
+            # np.expand_dims(a, axis=0)表示在多维数组0维，也就是最外围，添加数据，数组(1,2,3)一共有0、1、2、3四个维度可以添加数据；0维度就是直接给原来数组外面加括号
+            # 我认为这里增加1维是为了当作数据集的标号？
             return np.expand_dims(f['lr'][idx] / 255., 0), np.expand_dims(f['hr'][idx] / 255., 0)
+            # 返回的是1个元组，在python中[]为列表，{}为集合，()为元组，["":,]为字典
 
     def __len__(self):
         with h5py.File(self.h5_file, 'r') as f:
