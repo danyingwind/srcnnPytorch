@@ -72,7 +72,9 @@ if __name__ == '__main__':
 
     # torch.no_grad() 是一个上下文管理器,表示执行计算，但该计算不会在反向传播中被记录。
     with torch.no_grad():
-        preds = model(y).clamp(0.0, 1.0) #torch.clamp(input, min, max, out=None)
+        preds = model(y).clamp(0.0, 1.0) 
+        # torch.clamp(input, min, max, out=None)
+        # 这里在(0,1)进行clamp，是因为图像输入的时候已经使用255来将范围调整到(0,1)
 
     psnr = calc_psnr(y, preds)
     print('PSNR: {:.2f}'.format(psnr))# 格式化输出的函数

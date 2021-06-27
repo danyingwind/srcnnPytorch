@@ -74,6 +74,8 @@ if __name__ == '__main__':
     # 加载eval数据
     eval_dataloader = DataLoader(dataset=eval_dataset, batch_size=1)
 
+    # 使用deepcopy可以保证有list嵌套时，子list的修改之间是相互独立的
+    # https://www.cnblogs.com/ziytong/p/11776459.html?ivk_sa=1024320u
     best_weights = copy.deepcopy(model.state_dict()) # 深拷贝
     best_epoch = 0
     best_psnr = 0.0
