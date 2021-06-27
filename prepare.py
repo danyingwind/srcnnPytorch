@@ -5,6 +5,8 @@ import numpy as np
 import PIL.Image as pil_image# python的一个图像处理模块
 from utils import convert_rgb_to_y
 
+pil_image.LOAD_TRUNCATED_IMAGES = True
+
 # 训练集的数据预处理
 def train(args):
     h5_file = h5py.File(args.output_path, 'w')# 以写的方式打开路径文件
