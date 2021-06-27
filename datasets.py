@@ -30,7 +30,7 @@ class EvalDataset(Dataset): # 验证集的处理
 
     def __getitem__(self, idx):#这里和train不太一样
         with h5py.File(self.h5_file, 'r') as f:
-            # 这里是不是说数据的维度不一样呢？
+            # 这里数据归一化的处理方法和TrainDataset意思相同，[:,:]的方法在python3中已经不使用了
             return np.expand_dims(f['lr'][str(idx)][:, :] / 255., 0), np.expand_dims(f['hr'][str(idx)][:, :] / 255., 0)
 
     def __len__(self):
