@@ -97,7 +97,7 @@ if __name__ == '__main__':
     # https://blog.csdn.net/qq_36293056/article/details/105122682
     # 创建一个解析器，其中有将命令行解析成python数据所需要的所有信息
     parser = argparse.ArgumentParser()
-    parser.add_argument('--images-dir', type=str, required=True) # 这里train和eval都用了images_dir，是同一个吗
+    parser.add_argument('--images-dir', type=str, required=True) # 这里train和eval都用了images_dir，不是同一个
     parser.add_argument('--output-path', type=str, required=True)
     parser.add_argument('--patch-size', type=int, default=33)
     parser.add_argument('--stride', type=int, default=14)
