@@ -1,8 +1,11 @@
 # HDF（Hierarchical Data Format）指一种为存储和处理大容量科学数据设计的文件格式及相应库文件。
 # h5py是Python语言用来操作HDF5的模块
 import h5py
+import io, os, random
+from PIL import Image
 import numpy as np
 from torch.utils.data import Dataset#用于实现数据读取的工具包
+from torch.utils.data import DataLoader
 
 
 class TrainDataset(Dataset):# 训练集的处理
@@ -37,16 +40,34 @@ class EvalDataset(Dataset): # 验证集的处理
         with h5py.File(self.h5_file, 'r') as f:
             return len(f['lr']) # 返回元素个数
 
-
+# 这里虽然设置的是读取训练集，但是按照lyp的说法，可以直接读入所有数据，然后使用random_split划分数据集
 class TrainDataset2(Dataset):
     # 这里通常是构造所有数据的地址列表
     def __init__(self):
+        self.width = 1280
+        self.high = 1280 # 实际上高度是不确定的
+        self.images_list = []
+        self.num = 0
+        file_path = "/home/wangdanying/SRCNN/R1TexturePng"
+        images_list = os.listdir(filepath);
+        self.num = len(self.images_list)
+        imgs = []
+        for i in range(self.num):
+            imgs.append(Image.open(self.images_list[i]))
+        
+        # 将图像数据转化成array，再转换成tensor
+        imgs = [torch.from_numpy((np.array(img).astype(np.float32)/255.)  for lrt in lrts]
+
 
 
     # 这里定义获取数据的方法
     def __getitem__(self, index):
+
+        return self.images_list[index]
+
     
 
     # 这里返回数据的数量
     def __len__(self):
+        return self.num
             
