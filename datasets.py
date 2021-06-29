@@ -1,11 +1,13 @@
 # HDF（Hierarchical Data Format）指一种为存储和处理大容量科学数据设计的文件格式及相应库文件。
 # h5py是Python语言用来操作HDF5的模块
 import h5py
+import glob
 import io, os, random
-from PIL import Image
+import PIL.Image as pil_image
 import numpy as np
 from torch.utils.data import Dataset#用于实现数据读取的工具包
 from torch.utils.data import DataLoader
+from utils import convert_rgb_to_y
 
 
 class TrainDataset(Dataset):# 训练集的处理
@@ -44,26 +46,68 @@ class EvalDataset(Dataset): # 验证集的处理
 class TrainDataset2(Dataset):
     # 这里通常是构造所有数据的地址列表
     def __init__(self):
-        self.width = 1280
-        self.high = 1280 # 实际上高度是不确定的
-        self.images_list = []
-        self.num = 0
-        file_path = "/home/wangdanying/SRCNN/R1TexturePng"
-        images_list = os.listdir(filepath);
-        self.num = len(self.images_list)
-        imgs = []
-        for i in range(self.num):
-            imgs.append(Image.open(self.images_list[i]))
+        self.hr_patches = [] # 这里hr对应原图
+        self.lr_patches = [] # 这里lr对应压缩图，但是原图和压缩图的大小是一样的，只是来自不同的文件夹
+        hr_images_dir = "/home/wangdanying/SRCNN/*****"
+        lr_images_dir = "/home/wangdanying/SRCNN/*****"
+        image_width = 1280
+        image_height = 1280
+        patch_size = 32 #使用SRCNN的初始配置为33
+        stride = 16 #SRCNN的初始配置为14
+
+        for image_path in sorted(glob.glob('{}/*'.format(hr_images_dir))):
+            img = pil_image.open(image_path).convert('RGB')
+            hr = img.crop([0,0,image_width,image_height])
+            hr = np.array(hr).astype(np.float32)
+            hr = convert_rgb_to_y(hr)
+            # CNN处理图像的时候，不是一次输入一整块，而是把图像划分成多个patch
+            # 获取每张图的hr_patches
+            for i in range(0, hr.shape[0] - patch_size + 1, stride): 
+                for j in range(0, hr.shape[1] - patch_size + 1, stride):
+                    self.hr_patches.append(hr[i:i + patch_size, j:j + patch_size])
+
+        for image_path in sorted(glob.glob('{}/*'.format(lr_images_dir))):
+            img = pil_image.open(image_path).convert('RGB')
+            lr = img.crop([0,0,image_width,image_height])
+            lr = np.array(lr).astype(np.float32)
+            lr = convert_rgb_to_y(lr)
+            # CNN处理图像的时候，不是一次输入一整块，而是把图像划分成多个patch
+            # 获取每张图的lr_patches
+            for i in range(0, lr.shape[0] - patch_size + 1, stride): 
+                for j in range(0, lr.shape[1] - patch_size + 1, stride):
+                    self.lr_patches.append(lr[i:i + patch_size, j:j + patch_size])
+            
+
+        # 经过上述for循环，已经获得了所有图像分割后的patch，将patches转换成array
+        self.num = len(self.lr_patches)
+        self.lr_patches = np.array(self.lr_patches)
+        self.hr_patches = np.array(self.hr_patches)
+
+        ####################################注意要将接下来的数据放入字典
+        # 是不是数据不放入字典也可以？
+
+        ###########################################################
+
+        # self.num = len(self.lr_patches)
+        # self.width = 1280
+        # self.high = 1280 # 实际上高度是不确定的
+        # self.images_list = []
+        # self.num = 0
         
-        # 将图像数据转化成array，再转换成tensor
-        imgs = [torch.from_numpy((np.array(img).astype(np.float32)/255.)  for lrt in lrts]
+        # images_list = os.listdir(filepath);
+        # self.num = len(self.images_list)
+        # imgs = []
+        # for i in range(self.num):
+        #     imgs.append(Image.open(self.images_list[i]))
+        
+        # # 将图像数据转化成array，再转换成tensor
+        # imgs = [torch.from_numpy((np.array(img).astype(np.float32)/255.)  for lrt in lrts]
 
 
 
     # 这里定义获取数据的方法
     def __getitem__(self, index):
-
-        return self.images_list[index]
+        return np.expand_dims(self.lr_patches[index]/255., 0), np.expand_dims(self.hr_patches[index]/255., 0)
 
     
 
@@ -71,3 +115,78 @@ class TrainDataset2(Dataset):
     def __len__(self):
         return self.num
             
+class EvalDataset2(Dataset):
+    # 这里通常是构造所有数据的地址列表
+    def __init__(self):
+        # 注意这里的数据是字典索引下得到的列表
+        self.hr_patches = {} # 这里hr对应原图
+        self.lr_patches = {} # 这里lr对应压缩图，但是原图和压缩图的大小是一样的，只是来自不同的文件夹
+        hr_images_dir = "/home/wangdanying/SRCNN/*****"
+        lr_images_dir = "/home/wangdanying/SRCNN/*****"
+        image_width = 1280
+        image_height = 1280
+        patch_size = 32 #使用SRCNN的初始配置为33
+        stride = 16 #SRCNN的初始配置为14
+
+        #############################################################################
+        #这里需要注意，是不是一张图像对应一个验证集
+        #############################################################################
+        for i, image_path in enumerate(sorted(glob.glob('{}/*'.format(hr_images_dir)))):
+            img = pil_image.open(image_path).convert('RGB')
+            hr = img.crop([0,0,image_width,image_height])
+            hr = np.array(hr).astype(np.float32)
+            hr = convert_rgb_to_y(hr)
+            # CNN处理图像的时候，不是一次输入一整块，而是把图像划分成多个patch
+            # 获取每张图的hr_patches
+            for i in range(0, hr.shape[0] - patch_size + 1, stride): 
+                for j in range(0, hr.shape[1] - patch_size + 1, stride):
+                    self.hr_patches[str(i)].append(hr[i:i + patch_size, j:j + patch_size])
+
+        for i, image_path in enumerate(sorted(glob.glob('{}/*'.format(lr_images_dir)))):
+            img = pil_image.open(image_path).convert('RGB')
+            lr = img.crop([0,0,image_width,image_height])
+            lr = np.array(lr).astype(np.float32)
+            lr = convert_rgb_to_y(lr)
+            # CNN处理图像的时候，不是一次输入一整块，而是把图像划分成多个patch
+            # 获取每张图的lr_patches
+            for i in range(0, lr.shape[0] - patch_size + 1, stride): 
+                for j in range(0, lr.shape[1] - patch_size + 1, stride):
+                    self.lr_patches[str(i)].append(lr[i:i + patch_size, j:j + patch_size])
+            
+
+        # 经过上述for循环，已经获得了所有图像分割后的patch，将patches转换成array
+        self.num = len(self.lr_patches)
+        self.lr_patches = np.array(self.lr_patches)
+        self.hr_patches = np.array(self.hr_patches)
+
+        ####################################注意要将接下来的数据放入字典
+        # 是不是数据不放入字典也可以？
+
+        ###########################################################
+
+        # self.num = len(self.lr_patches)
+        # self.width = 1280
+        # self.high = 1280 # 实际上高度是不确定的
+        # self.images_list = []
+        # self.num = 0
+        
+        # images_list = os.listdir(filepath);
+        # self.num = len(self.images_list)
+        # imgs = []
+        # for i in range(self.num):
+        #     imgs.append(Image.open(self.images_list[i]))
+        
+        # # 将图像数据转化成array，再转换成tensor
+        # imgs = [torch.from_numpy((np.array(img).astype(np.float32)/255.)  for lrt in lrts]
+
+
+
+    # 这里定义获取数据的方法
+    def __getitem__(self, index):
+        return np.expand_dims(self.lr_patches[index]/255., 0), np.expand_dims(self.hr_patches[index]/255., 0)
+
+    
+
+    # 这里返回数据的数量
+    def __len__(self):
+        return self.num
