@@ -9,7 +9,8 @@
             "type": "python",
             "request": "launch",
             "program": "${file}",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "args": ["--images-dir", "/home/wangdanying/SRCNN/png_R1_lr", "--output-path", "/home/wangdanying/SRCNN/png_R1_lr111"]
         }
     ]
 }

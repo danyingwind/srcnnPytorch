@@ -1,11 +1,3 @@
-############################################################
-######### 按照现在数据的实时读取，已经用不到prepare.py ###########
-############################################################
-
-
-
-
-
 import argparse
 import glob
 import h5py
@@ -13,7 +5,6 @@ import numpy as np
 import PIL.Image as pil_image# python的一个图像处理模块
 from utils import convert_rgb_to_y
 
-pil_image.LOAD_TRUNCATED_IMAGES = True
 
 # 训练集的数据预处理
 def train(args):
