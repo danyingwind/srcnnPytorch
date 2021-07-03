@@ -14,7 +14,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--weights-file', type=str, required=True)
     parser.add_argument('--image-file', type=str, required=True)
-    parser.add_argument('--scale', type=int, default=3)
+    parser.add_argument('--scale', type=int, default=1)
     args = parser.parse_args()
 
     # https://www.cnblogs.com/captain-dl/p/11938864.html
@@ -24,7 +24,7 @@ if __name__ == '__main__':
 
     # 可以在cuda和cpu之间进行选择，并指定设备号，设备号不存在的时候使用当前设备。下列语句的意思是，用设备号为0的cuda。
     # cuda是一种硬件加速程序，https://www.cnblogs.com/AngelaSunny/p/7845587.html
-    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
     # 用于指定model加载到某个设备
     model = SRCNN().to(device)
  

@@ -20,19 +20,21 @@ def train(args):
     # 查找文件只用到三个匹配符："*", "?", "[]"。
     # "*"匹配0个或多个字符；"?"匹配单个字符；"[]"匹配指定范围内的字符，如：[0-9]匹配数字。
     # 下面sorted()的意思是对以args.images_dir为前缀的所有路径进行排序，for是对每张图进行遍历
-    for image_path in sorted(glob.glob('{}/*'.format(args.images_dir))):
-        hr = pil_image.open(image_path).convert('RGB')
+    for hr_path in sorted(glob.glob('{}/*'.format(args.images_hr))):
+        hr = pil_image.open(hr_path).convert('RGB') # 读取hr文件
+        lr_path = hr_path[0:31]+'l'+hr_path[32:] # 获取lr路径
+        lr = pil_image.open(lr_path).convert('RGB') # 读取lr文件
         #如果不用convert('RGB')，会导致图像是4通道RGBA，A是透明度通道，现在用不到
 
         # 尺寸调整
-        hr_width = (hr.width // args.scale) * args.scale
-        hr_height = (hr.height // args.scale) * args.scale
-
+        # hr_width = (hr.width // args.scale) * args.scale
+        # hr_height = (hr.height // args.scale) * args.scale
         # BICUBIC获取高/低分辨率的图像
-        hr = hr.resize((hr_width, hr_height), resample=pil_image.BICUBIC)
-        lr = hr.resize((hr_width // args.scale, hr_height // args.scale), resample=pil_image.BICUBIC)
-        lr = lr.resize((lr.width * args.scale, lr.height * args.scale), resample=pil_image.BICUBIC)
+        # hr = hr.resize((hr_width, hr_height), resample=pil_image.BICUBIC)
+        # lr = hr.resize((hr_width // args.scale, hr_height // args.scale), resample=pil_image.BICUBIC)
+        # lr = lr.resize((lr.width * args.scale, lr.height * args.scale), resample=pil_image.BICUBIC)
 
+        # 这里直接获取了hr和lr图像，且不涉及超分，因此不需要进行尺寸调整
         # 数据类型转换
         hr = np.array(hr).astype(np.float32)
         lr = np.array(lr).astype(np.float32)
@@ -66,17 +68,19 @@ def eval(args):
     lr_group = h5_file.create_group('lr')
     hr_group = h5_file.create_group('hr')
 
-    # enumerate是枚举函数，i、image_path分别对应索引下标和路径
-    for i, image_path in enumerate(sorted(glob.glob('{}/*'.format(args.images_dir)))):
-        hr = pil_image.open(image_path).convert('RGB')
+    # enumerate是枚举函数，i、hr_path分别对应索引下标和路径
+    for i, hr_path in enumerate(sorted(glob.glob('{}/*'.format(args.images_hr)))):
+        hr = pil_image.open(hr_path).convert('RGB')
+        lr_path = hr_path[0:31]+'l'+hr_path[32:] # 获取lr路径
+        lr = pil_image.open(lr_path).convert('RGB') # 读取lr文件
        
-        # 调整图像尺寸
-        hr_width = (hr.width // args.scale) * args.scale
-        hr_height = (hr.height // args.scale) * args.scale
-        # 获得低/高分辨率图像
-        hr = hr.resize((hr_width, hr_height), resample=pil_image.BICUBIC)
-        lr = hr.resize((hr_width // args.scale, hr_height // args.scale), resample=pil_image.BICUBIC)
-        lr = lr.resize((lr.width * args.scale, lr.height * args.scale), resample=pil_image.BICUBIC)
+        # # 调整图像尺寸
+        # hr_width = (hr.width // args.scale) * args.scale
+        # hr_height = (hr.height // args.scale) * args.scale
+        # # 获得低/高分辨率图像
+        # hr = hr.resize((hr_width, hr_height), resample=pil_image.BICUBIC)
+        # lr = hr.resize((hr_width // args.scale, hr_height // args.scale), resample=pil_image.BICUBIC)
+        # lr = lr.resize((lr.width * args.scale, lr.height * args.scale), resample=pil_image.BICUBIC)
         # 数据格式转换
         hr = np.array(hr).astype(np.float32)
         lr = np.array(lr).astype(np.float32)
@@ -98,11 +102,13 @@ if __name__ == '__main__':
     # https://blog.csdn.net/qq_36293056/article/details/105122682
     # 创建一个解析器，其中有将命令行解析成python数据所需要的所有信息
     parser = argparse.ArgumentParser()
-    parser.add_argument('--images-dir', type=str, required=True) # 这里train和eval都用了images_dir，不是同一个
-    parser.add_argument('--output-path', type=str, required=True)
-    parser.add_argument('--patch-size', type=int, default=33)
-    parser.add_argument('--stride', type=int, default=14)
-    parser.add_argument('--scale', type=int, default=2)
+    #parser.add_argument('--images-dir', type=str, required=True) # 这里train和eval都用了images_dir，不是同一个
+    #parser.add_argument('--images-lr', type=str, required=True) # 这里指示低分辨率图像的地址
+    parser.add_argument('--images-hr', type=str, required=True) # 这里指示高分辨率图像的地址
+    parser.add_argument('--output-path', type=str, required=True) # 这里指示生成的h5文件的地址
+    parser.add_argument('--patch-size', type=int, default=256)
+    parser.add_argument('--stride', type=int, default=100)
+    # parser.add_argument('--scale', type=int, default=2)
     parser.add_argument('--eval', action='store_true') # 当'--eval'出现时，将其状态设为true
     
     # 从默认的地方获取数据，并写入默认的数据结构

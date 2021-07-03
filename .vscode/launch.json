@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": ["--images-dir", "/home/wangdanying/SRCNN/png_R1_lr", "--output-path", "/home/wangdanying/SRCNN/png_R1_lr111"]
+            "args": ["--images-hr", "/home/wangdanying/SRCNN/png_R1_hr_train", "--output-path", "/home/wangdanying/SRCNN/png_R1_train"]
         }
     ]
 }
