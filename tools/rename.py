@@ -2,10 +2,10 @@ import os
  
 import re
  
-filepath = "/home/wangdanying/SRCNN/R1TexturePng"
+filepath = "/home/wangdanying/SRCNN/png_R1_lr_train"
 
 #要删除的名字字符串 
-delect = "8bit_p420_"
+delect = "rec_"
 if __name__ == '__main__':
     if not os.path.exists(filepath):
         print("目录不存在!!")
