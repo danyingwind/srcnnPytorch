@@ -1,1 +1,2 @@
+python cleanlog.py
 python train.py "--train-file" "/home/wangdanying/SRCNN/png_R1_train" "--eval-file" "/home/wangdanying/SRCNN/png_R1_eval" "--outputs-dir" "/home/wangdanying/SRCNN/srcnnPytorch/debug/trainLog"
