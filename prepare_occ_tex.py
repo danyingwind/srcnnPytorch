@@ -57,19 +57,12 @@ def train(args):
         # 获取每张图的lr_tex_patches,hr_tex_patches,lr_occ_patches,hr_occ_patches
         for i in range(0, hr_tex.shape[0] - args.patch_size + 1, args.stride): 
             for j in range(0, hr_tex.shape[1] - args.patch_size + 1, args.stride):
-                lr_tex_patches.append(lr_tex[i:i + args.patch_size, j:j + args.patch_size])
-                hr_tex_patches.append(hr_tex[i:i + args.patch_size, j:j + args.patch_size])
-                lr_occ_patches.append(lr_tex[i:i + args.patch_size, j:j + args.patch_size])
-                hr_occ_patches.append(hr_tex[i:i + args.patch_size, j:j + args.patch_size])
-        
+                lr_patches.append(np.array([lr_tex[i:i + args.patch_size, j:j + args.patch_size],lr_occ[i:i + args.patch_size, j:j + args.patch_size]]))
+                hr_patches.append(np.array([hr_tex[i:i + args.patch_size, j:j + args.patch_size],hr_occ[i:i + args.patch_size, j:j + args.patch_size]]))
 
     # 经过上述for循环，已经获得了所有图像分割后的patch，将patches转换成array
-    lr_tex_patches = np.array(lr_tex_patches)
-    hr_tex_patches = np.array(hr_tex_patches)
-    lr_occ_patches = np.array(lr_occ_patches)
-    hr_occ_patches = np.array(hr_occ_patches)
-    lr_patches = np.array([lr_tex_patches,lr_occ_patches])
-    hr_patches = np.array([hr_occ_patches,lr_occ_patches])
+    lr_patches = np.array(lr_patches)
+    hr_patches = np.array(hr_patches)
 
 
     # 创建数据集，注意这里的dataset
