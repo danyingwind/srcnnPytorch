@@ -1,7 +1,6 @@
 import argparse
 import glob
 import h5py
-import cv2
 import numpy as np
 import PIL.Image as pil_image# python的一个图像处理模块
 from utils import convert_rgb_to_y
@@ -32,15 +31,21 @@ def train(args):
     lr_tex_paths = sorted(glob.glob('{}/*'.format(args.lr_tex_images)));
     hr_occ_paths = sorted(glob.glob('{}/*'.format(args.hr_occ_images)));
     lr_occ_paths = sorted(glob.glob('{}/*'.format(args.lr_occ_images)));
+    print("lr_tex_patches.size()=",len(lr_tex_paths))  
     for i in range(0,len(hr_tex_paths)) : 
         hr_tex = pil_image.open(hr_tex_paths[i]).convert('RGB') # 读取hr_tex文件
+        print("读取hr_tex文件")
         lr_tex = pil_image.open(lr_tex_paths[i]).convert('RGB') # 读取lr_tex文件
-        hr_occ = pil_image.open(hr_occ_paths[i/2]).convert('RGB') # 读取hr_occ文件
-        lr_occ = pil_image.open(lr_occ_paths[i/2]).convert('RGB') # 读取lr_occ文件
+        print("读取lr_tex文件")
+        hr_occ = pil_image.open(hr_occ_paths[int(i/2)]).convert('RGB') # 读取hr_occ文件
+        print("读取hr_occ文件")
+        lr_occ = pil_image.open(lr_occ_paths[int(i/2)]).convert('RGB') # 读取lr_occ文件
+        print("读取lr_occ文件")
         #如果不用convert('RGB')，会导致图像是4通道RGBA，A是透明度通道，现在用不到
 
         # 通过观察的中间文件可以发现，占用图的大小始终小于texture，
         # 因此在处理的时候需要先将occupancy变得和texture一样大小
+        print("resize")
         hr_occ = hr_occ.resize((hr_tex.width, hr_tex.height), resample=pil_image.BICUBIC)
         lr_occ = lr_occ.resize((lr_tex.width, lr_tex.height), resample=pil_image.BICUBIC)
 
@@ -69,6 +74,7 @@ def train(args):
     hr_tex_patches = np.array(hr_tex_patches)
     lr_occ_patches = np.array(lr_occ_patches)
     hr_occ_patches = np.array(hr_occ_patches)
+    print("lr_tex_patches形状：",lr_tex_patches.shape)         #打印数组形状 
 
 
     # 创建数据集，注意这里的dataset
@@ -122,7 +128,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     #parser.add_argument('--images-dir', type=str, required=True) # 这里train和eval都用了images_dir，不是同一个
     #parser.add_argument('--images-lr', type=str, required=True) # 这里指示低分辨率图像的地址
-    parser.add_argument('--images-hr', type=str, required=True) # 这里指示高分辨率图像的地址
+    #parser.add_argument('--images-hr', type=str, required=True) # 这里指示高分辨率图像的地址
+    parser.add_argument('--hr-tex-images', type=str, required=True)
+    parser.add_argument('--lr-tex-images', type=str, required=True)
+    parser.add_argument('--hr-occ-images', type=str, required=True)
+    parser.add_argument('--lr-occ-images', type=str, required=True)
     parser.add_argument('--output-path', type=str, required=True) # 这里指示生成的h5文件的地址
     parser.add_argument('--patch-size', type=int, default=256)
     parser.add_argument('--stride', type=int, default=100)

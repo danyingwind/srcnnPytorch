@@ -1,1 +1,1 @@
-python prepare.py "--images-hr" "/home/wangdanying/SRCNN/png_R1_hr_train" "--output-path" "/home/wangdanying/SRCNN/png_train"
+python prepare_occ_tex.py --hr-tex-images "/home/wangdanying/SRCNN/png_R5__texture" --lr-tex-images "/home/wangdanying/SRCNN/png_R1_texture_rec" --hr-occ-images "/home/wangdanying/SRCNN/png_R5_occupancy" --lr-occ-images "/home/wangdanying/SRCNN/png_R1_occupancy_rec" --output-path "/home/wangdanying/SRCNN/png_train"
