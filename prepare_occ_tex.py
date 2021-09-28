@@ -1,6 +1,7 @@
 import argparse
 import glob
 import h5py
+import cv2
 import numpy as np
 import PIL.Image as pil_image# python的一个图像处理模块
 from utils import convert_rgb_to_y
@@ -13,46 +14,62 @@ def train(args):
     # https://blog.csdn.net/qq_34859482/article/details/80115237
     # h5py是1个管理数据的容器，里面可以有具体的数据以及数据分组
 
+    lr_tex_patches = []
+    hr_tex_patches = []
+    lr_occ_patches = []
+    hr_occ_patches = []
     lr_patches = []
     hr_patches = []
+
     
     # https://blog.csdn.net/GeorgeAI/article/details/81035422
     # glob模块用于查找符合特定规则的文件路径名。
     # 查找文件只用到三个匹配符："*", "?", "[]"。
     # "*"匹配0个或多个字符；"?"匹配单个字符；"[]"匹配指定范围内的字符，如：[0-9]匹配数字。
-    # 下面sorted()的意思是对以args.images_dir为前缀的所有路径进行排序，for是对每张图进行遍历
-    for hr_path in sorted(glob.glob('{}/*'.format(args.images_hr))):
-        hr = pil_image.open(hr_path).convert('RGB') # 读取hr文件
-        lr_path = hr_path[0:31]+'l'+hr_path[32:] # 获取lr路径
-        lr = pil_image.open(lr_path).convert('RGB') # 读取lr文件
+    # sorted(glob.glob('{}/*'.format(args.images_hr)))的意思是
+    # 对以args.images_dir为前缀的所有路径进行排序，for是对每张图进行遍历
+    hr_tex_paths = sorted(glob.glob('{}/*'.format(args.hr_tex_images)));
+    lr_tex_paths = sorted(glob.glob('{}/*'.format(args.lr_tex_images)));
+    hr_occ_paths = sorted(glob.glob('{}/*'.format(args.hr_occ_images)));
+    lr_occ_paths = sorted(glob.glob('{}/*'.format(args.lr_occ_images)));
+    for i in range(0,len(hr_tex_paths)) : 
+        hr_tex = pil_image.open(hr_tex_paths[i]).convert('RGB') # 读取hr_tex文件
+        lr_tex = pil_image.open(lr_tex_paths[i]).convert('RGB') # 读取lr_tex文件
+        hr_occ = pil_image.open(hr_occ_paths[i/2]).convert('RGB') # 读取hr_occ文件
+        lr_occ = pil_image.open(lr_occ_paths[i/2]).convert('RGB') # 读取lr_occ文件
         #如果不用convert('RGB')，会导致图像是4通道RGBA，A是透明度通道，现在用不到
 
-        # 尺寸调整
-        # hr_width = (hr.width // args.scale) * args.scale
-        # hr_height = (hr.height // args.scale) * args.scale
-        # BICUBIC获取高/低分辨率的图像
-        # hr = hr.resize((hr_width, hr_height), resample=pil_image.BICUBIC)
-        # lr = hr.resize((hr_width // args.scale, hr_height // args.scale), resample=pil_image.BICUBIC)
-        # lr = lr.resize((lr.width * args.scale, lr.height * args.scale), resample=pil_image.BICUBIC)
+        # 通过观察的中间文件可以发现，占用图的大小始终小于texture，
+        # 因此在处理的时候需要先将occupancy变得和texture一样大小
+        hr_occ = hr_occ.resize((hr_tex.width, hr_tex.height), resample=pil_image.BICUBIC)
+        lr_occ = lr_occ.resize((lr_tex.width, lr_tex.height), resample=pil_image.BICUBIC)
 
-        # 这里直接获取了hr和lr图像，且不涉及超分，因此不需要进行尺寸调整
         # 数据类型转换
-        hr = np.array(hr).astype(np.float32)
-        lr = np.array(lr).astype(np.float32)
+        hr_tex = np.array(hr_tex).astype(np.float32)
+        lr_tex = np.array(lr_tex).astype(np.float32)
+        hr_occ = np.array(hr_occ).astype(np.float32)
+        lr_occ = np.array(lr_occ).astype(np.float32)
         # 根据RGB求Y
-        hr = convert_rgb_to_y(hr)
-        lr = convert_rgb_to_y(lr)
-
+        hr_tex = convert_rgb_to_y(hr_tex)
+        lr_tex = convert_rgb_to_y(lr_tex)
+        hr_occ = convert_rgb_to_y(hr_occ)
+        lr_occ = convert_rgb_to_y(lr_occ)
         # CNN处理图像的时候，不是一次输入一整块，而是把图像划分成多个patch
-        # 获取每张图的lr_patches和hr_patches
-        for i in range(0, lr.shape[0] - args.patch_size + 1, args.stride): 
-            for j in range(0, lr.shape[1] - args.patch_size + 1, args.stride):
-                lr_patches.append(lr[i:i + args.patch_size, j:j + args.patch_size])
-                hr_patches.append(hr[i:i + args.patch_size, j:j + args.patch_size])
+        # 获取每张图的lr_tex_patches,hr_tex_patches,lr_occ_patches,hr_occ_patches
+        for i in range(0, hr_tex.shape[0] - args.patch_size + 1, args.stride): 
+            for j in range(0, hr_tex.shape[1] - args.patch_size + 1, args.stride):
+                lr_tex_patches.append(lr_tex[i:i + args.patch_size, j:j + args.patch_size])
+                hr_tex_patches.append(hr_tex[i:i + args.patch_size, j:j + args.patch_size])
+                lr_occ_patches.append(lr_tex[i:i + args.patch_size, j:j + args.patch_size])
+                hr_occ_patches.append(hr_tex[i:i + args.patch_size, j:j + args.patch_size])
+        
 
     # 经过上述for循环，已经获得了所有图像分割后的patch，将patches转换成array
-    lr_patches = np.array(lr_patches)
-    hr_patches = np.array(hr_patches)
+    lr_tex_patches = np.array(lr_tex_patches)
+    hr_tex_patches = np.array(hr_tex_patches)
+    lr_occ_patches = np.array(lr_occ_patches)
+    hr_occ_patches = np.array(hr_occ_patches)
+
 
     # 创建数据集，注意这里的dataset
     h5_file.create_dataset('lr', data=lr_patches)
