@@ -11,7 +11,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "args": [
-                "--hr-tex-images","/home/wangdanying/SRCNN/for_train_dataset/png_R5_texture","--lr-tex-images", "/home/wangdanying/SRCNN/for_train_dataset/png_R1_texture_rec","--hr-occ-images","/home/wangdanying/SRCNN/for_train_dataset/png_R5_occupancy","--lr-occ-images","/home/wangdanying/SRCNN/for_train_dataset/png_R1_occupancy_rec","--output-path","/home/wangdanying/SRCNN/png_train"]
+                "--hr-tex-images","/home/wangdanying/SRCNN/for_train_dataset/png_R5_texture","--lr-tex-images", "/home/wangdanying/SRCNN/for_train_dataset/png_R1_texture_rec","--hr-occ-images","/home/wangdanying/SRCNN/for_train_dataset/png_R5_occupancy","--lr-occ-images","/home/wangdanying/SRCNN/for_train_dataset/png_R1_occupancy_rec","--output-path","/home/wangdanying/SRCNN/png_train2"]
         }
     ]
 }

@@ -4,6 +4,7 @@ import h5py
 import numpy as np
 import PIL.Image as pil_image# python的一个图像处理模块
 from utils import convert_rgb_to_y
+from utils import convert_rgb_to_y2
 
 # 本文件生成的数据集只含有texture；lr对应的是R1_rec，hr对应的是R1原始
 
@@ -44,6 +45,18 @@ def train(args):
         lr_tex = np.array(lr_tex).astype(np.float32)
         hr_occ = np.array(hr_occ).astype(np.float32)
         lr_occ = np.array(lr_occ).astype(np.float32)
+        cnt0 = 0
+        res  =[]
+        for m in range(0,len(hr_occ)):
+            for n in range(0,len(hr_occ[0])):
+                if(hr_occ[m][n][2] == 0):
+                    cnt0 = cnt0+1
+                else:
+                    res.append(hr_occ[m][n][2])
+        print("m = ", len(hr_occ)) 
+        print("n = ", len(hr_occ[0])) 
+        print("图像序号 i = ", i)            
+        print("num of 0 = ", cnt0)
         # 根据RGB求Y
         hr_tex = convert_rgb_to_y(hr_tex)
         lr_tex = convert_rgb_to_y(lr_tex)
