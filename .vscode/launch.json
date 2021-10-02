@@ -11,7 +11,7 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "args": [
-                "--hr-tex-images","/home/wangdanying/SRCNN/for_train_dataset/png_R5_texture","--lr-tex-images", "/home/wangdanying/SRCNN/for_train_dataset/png_R1_texture_rec","--hr-occ-images","/home/wangdanying/SRCNN/for_train_dataset/png_R5_occupancy","--lr-occ-images","/home/wangdanying/SRCNN/for_train_dataset/png_R1_occupancy_rec","--output-path","/home/wangdanying/SRCNN/png_train2"]
+                "--hr-tex-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture/seq23/S23C2AIR05_F300_GOF0_texture_1280x1280_8bit_p420.yuv","--lr-tex-yuv-path", "/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/texture/seq23/S23C2AIR01_F300_GOF0_texture_rec_1280x1280_8bit_p420.yuv","--hr-occ-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/occupancy/seq23/S23C2AIR05_F300_GOF0_occupancy_640x640_8bit_p420.yuv","--lr-occ-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/occupancy/seq23/S23C2AIR01_F300_GOF0_occupancy_320x320_8bit_p420.yuv","--output-path","/home/wangdanying/SRCNN/trainset_s23GOF0"]
         }
     ]
 }

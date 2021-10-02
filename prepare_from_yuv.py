@@ -79,19 +79,24 @@ def eval(args):
     lr_group = h5_file.create_group('lr')
     hr_group = h5_file.create_group('hr')
 
-    # 获取四类图像的路径
-    hr_tex_paths = sorted(glob.glob('{}/*'.format(args.hr_tex_images)));
-    lr_tex_paths = sorted(glob.glob('{}/*'.format(args.lr_tex_images)));
-    hr_occ_paths = sorted(glob.glob('{}/*'.format(args.hr_occ_images)));
-    lr_occ_paths = sorted(glob.glob('{}/*'.format(args.lr_occ_images)));
+    # 获取YUV文件路径
+    hr_tex_yuv_path = args.hr_tex_yuv
+    lr_tex_yuv_path = args.lr_tex_yuv
+    hr_occ_yuv_path = args.hr_occ_yuv
+    lr_occ_yuv_path = args.lr_occ_yuv
+    
+    # 根据路径对应的文件获取y分量
+    hr_tex_y = get_n_Ychannel(hr_tex_yuv_path)
+    lr_tex_y = get_n_Ychannel(lr_tex_yuv_path)
+    hr_occ_y = get_n_Ychannel(hr_occ_yuv_path)
+    lr_occ_y = get_n_Ychannel(lr_occ_yuv_path)
 
     # enumerate是枚举函数，i、hr_path分别对应索引下标和路径
-    for i in range(0,len(hr_tex_paths)) : 
-        hr_tex = pil_image.open(hr_tex_paths[i]).convert('RGB') # 读取hr_tex文件
-        lr_tex = pil_image.open(lr_tex_paths[i]).convert('RGB') # 读取lr_tex文件
-        hr_occ = pil_image.open(hr_occ_paths[int(i/2)]).convert('RGB') # 读取hr_occ文件
-        lr_occ = pil_image.open(lr_occ_paths[int(i/2)]).convert('RGB') # 读取lr_occ文件
-
+    for i in range(0,len(hr_tex_y)) : 
+        hr_tex = hr_tex_y[i] # 提取一帧hr_tex
+        lr_tex = lr_tex_y[i] # 提取一帧lr_tex
+        hr_occ = hr_occ_y[i] # 提取一帧hr_occ
+        lr_occ = lr_occ_y[i] # 提取一帧lr_occ
         # 通过观察的中间文件可以发现，占用图的大小始终小于texture，
         # 因此在处理的时候需要先将occupancy变得和texture一样大小
         hr_occ = hr_occ.resize((hr_tex.width, hr_tex.height), resample=pil_image.BICUBIC)
@@ -102,11 +107,6 @@ def eval(args):
         lr_tex = np.array(lr_tex).astype(np.float32)
         hr_occ = np.array(hr_occ).astype(np.float32)
         lr_occ = np.array(lr_occ).astype(np.float32)
-        # 根据RGB求Y
-        hr_tex = convert_rgb_to_y(hr_tex)
-        lr_tex = convert_rgb_to_y(lr_tex)
-        hr_occ = convert_rgb_to_y(hr_occ)
-        lr_occ = convert_rgb_to_y(lr_occ)
 
         # 拼接occupancy和texture
         lr = np.array([lr_tex,lr_occ])
@@ -129,10 +129,10 @@ if __name__ == '__main__':
     #parser.add_argument('--images-dir', type=str, required=True) # 这里train和eval都用了images_dir，不是同一个
     #parser.add_argument('--images-lr', type=str, required=True) # 这里指示低分辨率图像的地址
     #parser.add_argument('--images-hr', type=str, required=True) # 这里指示高分辨率图像的地址
-    parser.add_argument('--hr-tex-images', type=str, required=True)
-    parser.add_argument('--lr-tex-images', type=str, required=True)
-    parser.add_argument('--hr-occ-images', type=str, required=True)
-    parser.add_argument('--lr-occ-images', type=str, required=True)
+    parser.add_argument('--hr-tex-yuv-path', type=str, required=True)
+    parser.add_argument('--lr-tex-yuv-path', type=str, required=True)
+    parser.add_argument('--hr-occ-yuv-path', type=str, required=True)
+    parser.add_argument('--lr-occ-yuv-path', type=str, required=True)
     parser.add_argument('--output-path', type=str, required=True) # 这里指示生成的h5文件的地址
     parser.add_argument('--patch-size', type=int, default=256)
     parser.add_argument('--stride', type=int, default=100)
