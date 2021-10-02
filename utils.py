@@ -126,3 +126,6 @@ def get_YUV_for_one_frame(f, frame_width, frame_height, patch_size=2):
 
     return dataY, dataU, dataV
 
+def get_size_from_path(f):
+
+    return []

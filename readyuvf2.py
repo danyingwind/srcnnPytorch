@@ -1,12 +1,6 @@
-# % ----读取一帧YUV，返回为padding之后的单帧Y，U，V分量----
-# % f:输入文件句柄为
-# % frame_width:YUV宽
-# % frame_height:YUV高
-# % patch_size: 截取patch的大小，比如64x64，当宽高不能被patch_size整除时，在图片右、下边界做padding处理（填0）
 import numpy as np
 import math
-
-def get_YUV_for_one_frame(f, frame_width, frame_height, patch_size=2):
+def get_YUV_for_one_frame(f, frame_width, frame_height, patch_size):
     y_buf = f.read(frame_width * frame_height)
     u_buf = f.read(frame_width * frame_height//4)
     v_buf = f.read(frame_width * frame_height//4)
@@ -50,3 +44,25 @@ def get_YUV_for_one_frame(f, frame_width, frame_height, patch_size=2):
     dataV = dataV.astype(np.uint8)
 
     return dataY, dataU, dataV
+
+#---从文件f中跳过前n_frames_start帧，读取n帧---
+def getnframes(f_stream, frame_num, frame_width, frame_height,n_frames_start = 0, patch_size = 2):
+    Ytmp = []
+    # # 跳过n_frames_start帧
+    for k in range(n_frames_start):
+        luma, chromaU, chromaV = get_YUV_for_one_frame(f_stream, frame_width, frame_height, patch_size)
+    for k in range(frame_num):
+        valid_luma, valid_chromaU, valid_chromaV = get_YUV_for_one_frame(f_stream, frame_width, frame_height, patch_size)
+        Ytmp.append(valid_luma)
+    return Ytmp
+
+def main():
+
+    dataset = []
+    yuv_names = []
+    for yuv_name in yuv_names:
+        f_stream = open(yuv_name, 'rb')
+        # 从yuv_name中获取宽高
+        frame_width, frame_height= 
+        datasettmp = getnframes(f_stream, 10, frame_width, frame_height) #从0帧开始，读10帧
+        dataset[idx] = datasettmp
