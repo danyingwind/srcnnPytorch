@@ -2,6 +2,11 @@
     // 使用 IntelliSense 了解相关属性。 
     // 悬停以查看现有属性的描述。
     // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    // 用于生成train_set的debug
+    /*
+    "--hr-tex-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture/seq23/S23C2AIR05_F300_GOF0_texture_1280x1280_8bit_p420.yuv","--lr-tex-yuv-path", "/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/texture/seq23/S23C2AIR01_F300_GOF0_texture_rec_1280x1280_8bit_p420.yuv","--hr-occ-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/occupancy/seq23/S23C2AIR05_F300_GOF0_occupancy_640x640_8bit_p420.yuv","--lr-occ-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/occupancy/seq23/S23C2AIR01_F300_GOF0_occupancy_320x320_8bit_p420.yuv","--output-path","/home/wangdanying/SRCNN/trainset_s23GOF0"
+    
+    */
     "version": "0.2.0",
     "configurations": [
         {
@@ -10,8 +15,8 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": [
-                "--hr-tex-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture/seq23/S23C2AIR05_F300_GOF0_texture_1280x1280_8bit_p420.yuv","--lr-tex-yuv-path", "/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/texture/seq23/S23C2AIR01_F300_GOF0_texture_rec_1280x1280_8bit_p420.yuv","--hr-occ-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/occupancy/seq23/S23C2AIR05_F300_GOF0_occupancy_640x640_8bit_p420.yuv","--lr-occ-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/occupancy/seq23/S23C2AIR01_F300_GOF0_occupancy_320x320_8bit_p420.yuv","--output-path","/home/wangdanying/SRCNN/trainset_s23GOF0"]
+            "args": ["--yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture"
+                ]
         }
     ]
 }

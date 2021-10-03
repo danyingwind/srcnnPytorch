@@ -3,7 +3,8 @@ import glob
 import h5py
 import numpy as np
 import PIL.Image as pil_image# python的一个图像处理模块
-from getYUV import get_n_Ychannel
+from my_utils import get_n_Ychannel
+from my_utils import ndarray_nearest_neighbour_scaling
 
 # 本文件生成的数据集含texture+occupancy
 # lr对应的是R1_rec，hr对应的是R5原始
@@ -25,32 +26,34 @@ def train(args):
     # "*"匹配0个或多个字符；"?"匹配单个字符；"[]"匹配指定范围内的字符，如：[0-9]匹配数字。
     # sorted(glob.glob('{}/*'.format(args.images_hr)))的意思是
     # 对以args.images_dir为前缀的所有路径进行排序，for是对每张图进行遍历
-    hr_tex_yuv_path = args.hr_tex_yuv
-    lr_tex_yuv_path = args.lr_tex_yuv
-    hr_occ_yuv_path = args.hr_occ_yuv
-    lr_occ_yuv_path = args.lr_occ_yuv
+    hr_tex_yuv_path = args.hr_tex_yuv_path
+    lr_tex_yuv_path = args.lr_tex_yuv_path
+    hr_occ_yuv_path = args.hr_occ_yuv_path
+    lr_occ_yuv_path = args.lr_occ_yuv_path
     
     # 根据路径对应的文件获取y分量
-    hr_tex_y = get_n_Ychannel(hr_tex_yuv_path)
-    lr_tex_y = get_n_Ychannel(lr_tex_yuv_path)
-    hr_occ_y = get_n_Ychannel(hr_occ_yuv_path)
-    lr_occ_y = get_n_Ychannel(lr_occ_yuv_path)
+    hr_tex_y = get_n_Ychannel(hr_tex_yuv_path,64,1280,1280)
+    lr_tex_y = get_n_Ychannel(lr_tex_yuv_path,64,1280,1280)
+    hr_occ_y = get_n_Ychannel(hr_occ_yuv_path,32,640,640)
+    lr_occ_y = get_n_Ychannel(lr_occ_yuv_path,32,320,320)
 
     for i in range(0,len(hr_tex_y)) : 
         hr_tex = hr_tex_y[i] # 提取一帧hr_tex
         lr_tex = lr_tex_y[i] # 提取一帧lr_tex
-        hr_occ = hr_occ_y[i] # 提取一帧hr_occ
-        lr_occ = lr_occ_y[i] # 提取一帧lr_occ
-        # 通过观察的中间文件可以发现，占用图的大小始终小于texture，
-        # 因此在处理的时候需要先将occupancy变得和texture一样大小
-        hr_occ = hr_occ.resize((hr_tex.width, hr_tex.height), resample=pil_image.BICUBIC)
-        lr_occ = lr_occ.resize((lr_tex.width, lr_tex.height), resample=pil_image.BICUBIC)
-
+        hr_occ = hr_occ_y[int(i/2)] # 提取一帧hr_occ
+        lr_occ = lr_occ_y[int(i/2)] # 提取一帧lr_occ
+        
         # 数据类型转换
         hr_tex = np.array(hr_tex).astype(np.float32)
         lr_tex = np.array(lr_tex).astype(np.float32)
         hr_occ = np.array(hr_occ).astype(np.float32)
         lr_occ = np.array(lr_occ).astype(np.float32)
+
+        # 通过观察的中间文件可以发现，占用图的大小始终小于texture，
+        # 因此在处理的时候需要先将occupancy变得和texture一样大小
+        hr_occ = ndarray_nearest_neighbour_scaling(hr_occ, len(hr_tex[0]), len(hr_tex[1]))
+        lr_occ = ndarray_nearest_neighbour_scaling(lr_occ, len(lr_tex[0]), len(lr_tex[1]))
+        
     
         # CNN处理图像的时候，不是一次输入一整块，而是把图像划分成多个patch
         # 获取每张图的lr_tex_patches,hr_tex_patches,lr_occ_patches,hr_occ_patches
@@ -80,33 +83,39 @@ def eval(args):
     hr_group = h5_file.create_group('hr')
 
     # 获取YUV文件路径
-    hr_tex_yuv_path = args.hr_tex_yuv
-    lr_tex_yuv_path = args.lr_tex_yuv
-    hr_occ_yuv_path = args.hr_occ_yuv
-    lr_occ_yuv_path = args.lr_occ_yuv
+    hr_tex_yuv_path = args.hr_tex_yuv_path
+    lr_tex_yuv_path = args.lr_tex_yuv_path
+    hr_occ_yuv_path = args.hr_occ_yuv_path
+    lr_occ_yuv_path = args.lr_occ_yuv_path
     
     # 根据路径对应的文件获取y分量
+    # TODO:这里的路径和参数还需要处理
+    #########################################
     hr_tex_y = get_n_Ychannel(hr_tex_yuv_path)
     lr_tex_y = get_n_Ychannel(lr_tex_yuv_path)
     hr_occ_y = get_n_Ychannel(hr_occ_yuv_path)
     lr_occ_y = get_n_Ychannel(lr_occ_yuv_path)
+    #########################################
 
     # enumerate是枚举函数，i、hr_path分别对应索引下标和路径
     for i in range(0,len(hr_tex_y)) : 
         hr_tex = hr_tex_y[i] # 提取一帧hr_tex
         lr_tex = lr_tex_y[i] # 提取一帧lr_tex
-        hr_occ = hr_occ_y[i] # 提取一帧hr_occ
-        lr_occ = lr_occ_y[i] # 提取一帧lr_occ
-        # 通过观察的中间文件可以发现，占用图的大小始终小于texture，
-        # 因此在处理的时候需要先将occupancy变得和texture一样大小
-        hr_occ = hr_occ.resize((hr_tex.width, hr_tex.height), resample=pil_image.BICUBIC)
-        lr_occ = lr_occ.resize((lr_tex.width, lr_tex.height), resample=pil_image.BICUBIC)
-       
+        hr_occ = hr_occ_y[int(i/2)] # 提取一帧hr_occ
+        lr_occ = lr_occ_y[int(i/2)] # 提取一帧lr_occ
+
         # 数据类型转换
         hr_tex = np.array(hr_tex).astype(np.float32)
         lr_tex = np.array(lr_tex).astype(np.float32)
         hr_occ = np.array(hr_occ).astype(np.float32)
         lr_occ = np.array(lr_occ).astype(np.float32)
+
+        # 通过观察的中间文件可以发现，占用图的大小始终小于texture，
+        # 因此在处理的时候需要先将occupancy变得和texture一样大小
+        hr_occ = ndarray_nearest_neighbour_scaling(hr_occ, len(hr_tex[0]), len(hr_tex[1]))
+        lr_occ = ndarray_nearest_neighbour_scaling(lr_occ, len(lr_tex[0]), len(lr_tex[1]))
+       
+        
 
         # 拼接occupancy和texture
         lr = np.array([lr_tex,lr_occ])

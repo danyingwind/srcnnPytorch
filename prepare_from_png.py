@@ -24,10 +24,10 @@ def train(args):
     # "*"匹配0个或多个字符；"?"匹配单个字符；"[]"匹配指定范围内的字符，如：[0-9]匹配数字。
     # sorted(glob.glob('{}/*'.format(args.images_hr)))的意思是
     # 对以args.images_dir为前缀的所有路径进行排序，for是对每张图进行遍历
-    hr_tex_paths = sorted(glob.glob('{}/*'.format(args.hr_tex_images)));
-    lr_tex_paths = sorted(glob.glob('{}/*'.format(args.lr_tex_images)));
-    hr_occ_paths = sorted(glob.glob('{}/*'.format(args.hr_occ_images)));
-    lr_occ_paths = sorted(glob.glob('{}/*'.format(args.lr_occ_images)));
+    hr_tex_paths = sorted(glob.glob('{}/*'.format(args.hr_tex_images)))
+    lr_tex_paths = sorted(glob.glob('{}/*'.format(args.lr_tex_images)))
+    hr_occ_paths = sorted(glob.glob('{}/*'.format(args.hr_occ_images)))
+    lr_occ_paths = sorted(glob.glob('{}/*'.format(args.lr_occ_images)))
     for i in range(0,len(hr_tex_paths)) : 
         hr_tex = pil_image.open(hr_tex_paths[i]).convert('RGB') # 读取hr_tex文件
         lr_tex = pil_image.open(lr_tex_paths[i]).convert('RGB') # 读取lr_tex文件
