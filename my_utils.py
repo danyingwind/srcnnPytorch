@@ -47,7 +47,7 @@ def ndarray_nearest_neighbour_scaling(label, new_h, new_w):
     label_new[:, :] = label[y_pos[:, :], x_pos[:, :]]
     return label_new
 
-# 获取R5_yuv/texture下的所有yuv的路径信息
+# 获取'/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture'下的所有yuv的路径信息
 def get_path_lists(yuv_path):
     # 这里的paths有三部分，对应seq23,seq24,seq25
     # 例子'/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture/seq23'
@@ -56,10 +56,29 @@ def get_path_lists(yuv_path):
     for path in paths:
         sub_path_list = sorted(glob.glob('{}/*'.format(path)))
         path_lists.extend(sub_path_list)
+    
+    # 经过上述for循环，可以获取所有的yuv路径
+    # 下面将所有路径拆分为训练集0-6，验证集7-8，测试集9
+    train_paths = []
+    eval_paths = []
+    test_paths = []
+    for path in path_lists:
+        path_split = path.split("/")
+        yuv_name = path_split[-1]
+        yuv_name_split = yuv_name.split("_")
+        GOF_num = yuv_name_split[2][3]
+        if(GOF_num >= '0' and GOF_num <= '6'):
+            train_paths.append(path)
+        elif(GOF_num >= '7' and GOF_num <= '8'):
+            eval_paths.append(path)
+        elif(GOF_num == '9'):
+            test_paths.append(path)
+
+    return [train_paths,eval_paths,test_paths]
 
     # path_lists的每个元素为
     # '/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture/seq23/S23C2AIR05_F300_GOF0_texture_1280x1280_8bit_p420.yuv'
-    return path_lists
+    # return path_lists
 
 # 输入为'/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture/seq23/S23C2AIR05_F300_GOF0_texture_1280x1280_8bit_p420.yuv'
 # 获取frame_num, frame_width, frame_height的信息
@@ -68,7 +87,11 @@ def get_yuv_paras(path):
     yuv_name = path_split[-1]
     yuv_name_split = yuv_name.split("_")
     GOF_num = yuv_name_split[2][3]
-    frame_paras = yuv_name_split[4].split("x")
+    frame_paras = [0,0]
+    if(yuv_name_split[4] == "rec"):
+        frame_paras = yuv_name_split[5].split("x")
+    else :
+        frame_paras = yuv_name_split[4].split("x")
     frame_width = int(frame_paras[0])
     frame_height = int(frame_paras[1])
     frame_num = 0
@@ -84,14 +107,20 @@ def get_yuv_paras(path):
             frame_num = 12
     return [frame_num,frame_width,frame_height]
 
-
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--yuv-path', type=str, required=True)
     # 从默认的地方获取数据，并写入默认的数据结构
     args = parser.parse_args()
-    ans = get_path_lists(args.yuv_path)
-    paras = get_yuv_paras(ans[0])
-    print(len(ans))
+    train_paths, eval_paths,test_paths = get_path_lists(args.yuv_path)
+
+    print(len(train_paths),len(eval_paths),len(test_paths),sep=',')
+
+
+
+
+
+
+
+
 
