@@ -2,16 +2,17 @@
     // 使用 IntelliSense 了解相关属性。 
     // 悬停以查看现有属性的描述。
     // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
-    
-    // 用于生成train_set的debug
-    /*
-    "--hr-tex-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture/seq23/S23C2AIR05_F300_GOF0_texture_1280x1280_8bit_p420.yuv","--lr-tex-yuv-path", "/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/texture/seq23/S23C2AIR01_F300_GOF0_texture_rec_1280x1280_8bit_p420.yuv","--hr-occ-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/occupancy/seq23/S23C2AIR05_F300_GOF0_occupancy_640x640_8bit_p420.yuv","--lr-occ-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/occupancy/seq23/S23C2AIR01_F300_GOF0_occupancy_320x320_8bit_p420.yuv","--output-path","/home/wangdanying/SRCNN/trainset_s23GOF0"
-    */
 
     // 用于生成eval_set的debug
     /*
     "--hrtex-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture","--hrocc-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/occupancy","--lrtex-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/texture","--lrocc-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/occupancy", "--output-path","/home/wangdanying/SRCNN/evalset_seq23GOF0-2","--dataset-type", "eval"
     */
+
+    // 用于train网络的debug
+    /*
+    "--train-file", "/home/wangdanying/SRCNN/srcnn_paper使用的数据/train_data/91-image_x2.h5", "--eval-file", "/home/wangdanying/SRCNN/evalset_seq23GOF0", "--outputs-dir", "/home/wangdanying/SRCNN/srcnnPytorch/debug/trainLog" 
+    */
+
     "version": "0.2.0",
     "configurations": [
         {
@@ -20,7 +21,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": [  "--train-file", "/home/wangdanying/SRCNN/srcnn_paper使用的数据/train_data/91-image_x2.h5", "--eval-file", "/home/wangdanying/SRCNN/evalset_seq23GOF0", "--outputs-dir", "/home/wangdanying/SRCNN/srcnnPytorch/debug/trainLog"  ]
+            "args": [  "--hrtex-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture","--hrocc-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/occupancy","--lrtex-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/texture","--lrocc-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/occupancy", "--output-path","/home/wangdanying/SRCNN/trainset_seq23GOF0-test","--dataset-type", "train" ]
         }
     ]
 }

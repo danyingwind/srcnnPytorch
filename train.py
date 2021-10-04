@@ -101,11 +101,11 @@ if __name__ == '__main__':
                 # 这里表示将获得的inputs/labels数据拷贝一份到device上去，之后的运算都在GPU上运行
                 inputs = inputs.to(device)
                 labels = labels.to(device)
-                print("inputs.shape=", inputs.shape)
-                print("labels.shape=", labels.shape)
+                # print("inputs.shape=", inputs.shape)
+                # print("labels.shape=", labels.shape)
                 preds = model(inputs) # 计算输出
                 
-                print("preds.shape=", preds.shape)
+                # print("preds.shape=", preds.shape)
                 
                 loss = criterion(preds, labels) # 计算误差
 
