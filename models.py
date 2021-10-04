@@ -2,7 +2,7 @@ from torch import nn
 
 
 class SRCNN(nn.Module):
-    def __init__(self, num_channels=1):
+    def __init__(self, num_channels=2):
         #__init__()方法是一种特殊的方法，被称为类的构造函数或初始化方法
         #self代表类的实例而非类
         super(SRCNN, self).__init__()

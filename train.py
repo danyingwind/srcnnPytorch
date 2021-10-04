@@ -21,7 +21,7 @@ if __name__ == '__main__':
     parser.add_argument('--train-file', type=str, required=True)
     parser.add_argument('--eval-file', type=str, required=True)
     parser.add_argument('--outputs-dir', type=str, required=True)
-    parser.add_argument('--scale', type=int, default=3)
+    parser.add_argument('--scale', type=int, default=1)
     parser.add_argument('--lr', type=float, default=1e-4)
     parser.add_argument('--batch-size', type=int, default=16)
     parser.add_argument('--num-epochs', type=int, default=400)
@@ -38,7 +38,8 @@ if __name__ == '__main__':
 
     # 用于加速神经网络的训练
     cudnn.benchmark = True
-    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda:3' if torch.cuda.is_available() else 'cpu')
+    #device = torch.device('cpu')
 
     # 为CPU设置种子用于生成随机数，以使得结果是确定的
     torch.manual_seed(args.seed)
@@ -92,15 +93,20 @@ if __name__ == '__main__':
         with tqdm(total=(len(train_dataset) - len(train_dataset) % args.batch_size)) as t:
             t.set_description('epoch: {}/{}'.format(epoch, args.num_epochs - 1)) # 用于输出信息
 
+            print("加载数据开始。。。。。")
             for data in train_dataloader:
+                print("加载数据")
                 # 读取数据的时候是以元组的形式获得了低/高分辨率的图像
                 inputs, labels = data
-
                 # 这里表示将获得的inputs/labels数据拷贝一份到device上去，之后的运算都在GPU上运行
                 inputs = inputs.to(device)
                 labels = labels.to(device)
-
+                print("inputs.shape=", inputs.shape)
+                print("labels.shape=", labels.shape)
                 preds = model(inputs) # 计算输出
+                
+                print("preds.shape=", preds.shape)
+                
                 loss = criterion(preds, labels) # 计算误差
 
                 # 调用AverageMeter()中定义的update函数来更新损失的计算
