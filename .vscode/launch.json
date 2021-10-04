@@ -15,7 +15,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": ["--hrtex-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture","--hrocc-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/occupancy","--lrtex-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/texture","--lrocc-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/occupancy", "--output-path","/home/wangdanying/SRCNN/trainset","--dataset-type", "train_seq23GOF0"
+            "args": ["--hrtex-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture","--hrocc-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/occupancy","--lrtex-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/texture","--lrocc-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/occupancy", "--output-path","/home/wangdanying/SRCNN/evalset_seq23GOF0-2","--dataset-type", "eval"
                 ]
         }
     ]

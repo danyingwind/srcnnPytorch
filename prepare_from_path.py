@@ -56,8 +56,8 @@ def train(paths):
 
             # 通过观察的中间文件可以发现，占用图的大小始终小于texture，
             # 因此在处理的时候需要先将occupancy变得和texture一样大小
-            hr_occ2 = my.ndarray_nearest_neighbour_scaling(hr_occ, len(hr_tex[0]), len(hr_tex[1]))
-            lr_occ = my.ndarray_nearest_neighbour_scaling(lr_occ, len(lr_tex[0]), len(lr_tex[1]))
+            hr_occ = my.ndarray_nearest_neighbour_scaling(hr_occ, len(hr_tex), len(hr_tex[0]))
+            lr_occ = my.ndarray_nearest_neighbour_scaling(lr_occ, len(lr_tex), len(lr_tex[0]))
             
         
             # CNN处理图像的时候，不是一次输入一整块，而是把图像划分成多个patch
@@ -92,7 +92,7 @@ def eval(paths):
     train_paths_lrtex = paths[2]
     train_paths_lrocc = paths[3]
 
-    idx = 0
+    idx = 1
     for m in range(len(train_paths_hrtex)):
         if(m > 0) : #这里只拿一个yuv做测试
             break
@@ -121,8 +121,10 @@ def eval(paths):
 
             # 通过观察的中间文件可以发现，占用图的大小始终小于texture，
             # 因此在处理的时候需要先将occupancy变得和texture一样大小
-            hr_occ = my.ndarray_nearest_neighbour_scaling(hr_occ, len(hr_tex[0]), len(hr_tex[1]))
-            lr_occ = my.ndarray_nearest_neighbour_scaling(lr_occ, len(lr_tex[0]), len(lr_tex[1]))
+            # print(lenhr_tex[0])
+            # print(hr_tex[1])
+            hr_occ = my.ndarray_nearest_neighbour_scaling(hr_occ, len(hr_tex), len(hr_tex[0]))
+            lr_occ = my.ndarray_nearest_neighbour_scaling(lr_occ, len(lr_tex), len(lr_tex[0]))
             
             # 拼接occupancy和texture
             lr = np.array([lr_tex,lr_occ])
