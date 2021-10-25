@@ -92,7 +92,7 @@ def eval(paths):
     train_paths_lrtex = paths[2]
     train_paths_lrocc = paths[3]
 
-    idx = 1
+    idx = 0
     for m in range(len(train_paths_hrtex)):
         if(m > 0) : #这里只拿一个yuv做测试
             break

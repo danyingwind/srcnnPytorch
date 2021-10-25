@@ -36,10 +36,14 @@ class EvalDataset(Dataset): # 验证集的处理
 
     def __getitem__(self, idx):#这里和train不太一样
         with h5py.File(self.h5_file, 'r') as f:
+            # print("返回数据。。。。。")
             # 这里数据归一化的处理方法和TrainDataset意思相同，[:,:]的方法在python3中已经不使用了
-            return np.expand_dims(f['lr'][str(idx)][:, :] / 255., 0), np.expand_dims(f['hr'][str(idx)][:, :] / 255., 0)
+            # 这里不应该增加数据的维度
+            # return np.expand_dims(f['lr'][str(idx)][:, :] / 255., 0), np.expand_dims(f['hr'][str(idx)][:, :] / 255., 0)
+            return f['lr'][str(idx)][:, :, :]/ 255., f['hr'][str(idx)][:, :, :] / 255.
 
     def __len__(self):
         with h5py.File(self.h5_file, 'r') as f:
+            # print("返回eval元素个数。。。。。")
             return len(f['lr']) # 返回元素个数
 

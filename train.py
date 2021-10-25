@@ -2,6 +2,7 @@ import argparse
 import os
 import copy
 
+import numpy as np
 import torch
 from torch import nn
 import torch.optim as optim #一个实现了各种优化算法的库
@@ -38,7 +39,7 @@ if __name__ == '__main__':
 
     # 用于加速神经网络的训练
     cudnn.benchmark = True
-    device = torch.device('cuda:3' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda:2' if torch.cuda.is_available() else 'cpu')
     #device = torch.device('cpu')
 
     # 为CPU设置种子用于生成随机数，以使得结果是确定的
@@ -93,9 +94,9 @@ if __name__ == '__main__':
         with tqdm(total=(len(train_dataset) - len(train_dataset) % args.batch_size)) as t:
             t.set_description('epoch: {}/{}'.format(epoch, args.num_epochs - 1)) # 用于输出信息
 
-            print("加载数据开始。。。。。")
+            # print("加载数据开始。。。。。")
             for data in train_dataloader:
-                print("加载数据")
+                # print("加载数据")
                 # 读取数据的时候是以元组的形式获得了低/高分辨率的图像
                 inputs, labels = data
                 # 这里表示将获得的inputs/labels数据拷贝一份到device上去，之后的运算都在GPU上运行
@@ -103,11 +104,15 @@ if __name__ == '__main__':
                 labels = labels.to(device)
                 # print("inputs.shape=", inputs.shape)
                 # print("labels.shape=", labels.shape)
+
                 preds = model(inputs) # 计算输出
+
+                preds_valid = preds[:][0]*labels[:][1]
+                labels_valid = labels[:][0]*labels[:][1]
+                # print("preds_valid.shape =", preds_valid.shape)
+                # print("labels_valid.shape =", labels_valid.shape)
                 
-                # print("preds.shape=", preds.shape)
-                
-                loss = criterion(preds, labels) # 计算误差
+                loss = criterion(preds_valid, preds_valid) # 计算误差
 
                 # 调用AverageMeter()中定义的update函数来更新损失的计算
                 epoch_losses.update(loss.item(), len(inputs)) 
@@ -123,6 +128,7 @@ if __name__ == '__main__':
                 t.update(len(inputs))
 
         # 保存模型，.pth是python中的模型文件
+        # print("保存模型。。。。。")
         torch.save(model.state_dict(), os.path.join(args.outputs_dir, 'epoch_{}.pth'.format(epoch)))
         
         ##################验证集###################
@@ -133,18 +139,30 @@ if __name__ == '__main__':
         # 采用自定义的AverageMeter()来管理变量的更新
         epoch_psnr = AverageMeter()
 
+        # print("开始验证。。。。。")
         for data in eval_dataloader:
+            # print("进入循环。。。。。")
             inputs, labels = data
 
             inputs = inputs.to(device)
             labels = labels.to(device)
 
             # torch.no_grad() 是一个上下文管理器，该语句覆盖的部分将不会追踪梯度。
+            # print("提取数据。。。。。")
             with torch.no_grad():
+                # 这里的clamp是将数值限定在0-1的范围内
                 preds = model(inputs).clamp(0.0, 1.0)
+                # 下面的操作是去除空维度
+                preds = np.squeeze(preds)
+                labels = np.squeeze(labels)
+                # print("preds.shape=",preds.shape)
+                # print("labels.shape=",labels.shape)
+                preds_valid = preds[:][0]*labels[:][1]
+                labels_valid = labels[:][0]*labels[:][1]
 
             # 根据AverageMeter()中定义的update函数更新psnr相关的值
-            epoch_psnr.update(calc_psnr(preds, labels), len(inputs))
+            # print("计算psnr。。。。。")
+            epoch_psnr.update(calc_psnr(preds_valid, labels_valid), len(inputs))
 
         print('eval psnr: {:.2f}'.format(epoch_psnr.avg))
 

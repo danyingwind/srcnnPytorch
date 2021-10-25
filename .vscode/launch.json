@@ -13,6 +13,11 @@
     "--train-file", "/home/wangdanying/SRCNN/srcnn_paper使用的数据/train_data/91-image_x2.h5", "--eval-file", "/home/wangdanying/SRCNN/evalset_seq23GOF0", "--outputs-dir", "/home/wangdanying/SRCNN/srcnnPytorch/debug/trainLog" 
     */
 
+    // 用于训练网络的debug
+    /*
+    "--hrtex-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture","--hrocc-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/occupancy","--lrtex-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/texture","--lrocc-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/occupancy", "--output-path","/home/wangdanying/SRCNN/trainset_seq23GOF0-test","--dataset-type", "train"
+    */
+
     "version": "0.2.0",
     "configurations": [
         {
@@ -21,7 +26,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": [  "--hrtex-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture","--hrocc-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/occupancy","--lrtex-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/texture","--lrocc-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/occupancy", "--output-path","/home/wangdanying/SRCNN/trainset_seq23GOF0-test","--dataset-type", "train" ]
+            // "args": [ "--hrtex-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture","--hrocc-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/occupancy","--lrtex-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/texture","--lrocc-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/occupancy", "--output-path","/home/wangdanying/SRCNN/evalset_seq23GOF0-2","--dataset-type", "eval"  ]
         }
     ]
 }
