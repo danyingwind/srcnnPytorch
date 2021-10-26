@@ -83,7 +83,7 @@ if __name__ == '__main__':
     best_psnr = 0.0
 
     for epoch in range(args.num_epochs):
-    ##################训练集###################
+        ################## 训练集 ###################
         # 设置为训练模式，train是模型训练的入口
         model.train()
 
@@ -131,7 +131,7 @@ if __name__ == '__main__':
         # print("保存模型。。。。。")
         torch.save(model.state_dict(), os.path.join(args.outputs_dir, 'epoch_{}.pth'.format(epoch)))
         
-        ##################验证集###################
+        ################## 验证集 ###################
         # model测试样本时要在model(test_datasets)之前，加上model.eval(). 
         # 否则的话，有输入数据，即使不训练，它也会改变权值。这是model中含有batch normalization层所带来的的性质。
         model.eval()

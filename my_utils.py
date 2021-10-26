@@ -67,7 +67,7 @@ def get_path_lists(yuv_path):
         yuv_name = path_split[-1]
         yuv_name_split = yuv_name.split("_")
         GOF_num = yuv_name_split[2][3]
-        if(GOF_num >= '0' and GOF_num <= '6'):
+        if(GOF_num >= '4' and GOF_num <= '6'):
             train_paths.append(path)
         elif(GOF_num >= '7' and GOF_num <= '8'):
             eval_paths.append(path)
@@ -100,7 +100,7 @@ def get_yuv_paras(path):
             frame_num = 64
         elif(path_split[6] == "occupancy"):
             frame_num = 32
-    elif(GOF_num == 9):
+    elif(GOF_num == '9'):
         if(path_split[6] == "texture"):
             frame_num = 24
         elif(path_split[6] == "occupancy"):
