@@ -2,7 +2,7 @@ import argparse
 import glob
 import h5py
 import numpy as np
-import PIL.Image as pil_image# python的一个图像处理模块
+import PIL.Image as pil_image # python的一个图像处理模块
 import my_utils as my
 
 # 本文件生成的数据集含texture+occupancy
@@ -22,15 +22,17 @@ def train(paths):
     lr_patches = []
     hr_patches = []
 
+    # 获取不同类型文件的yuv列表
     train_paths_hrtex = paths[0]
     train_paths_hrocc = paths[1]
     train_paths_lrtex = paths[2]
     train_paths_lrocc = paths[3]
 
-
+    # 开始依次处理所有的yuv
     for m in range(len(train_paths_hrtex)):
-        if(m > 0) : #这里只拿一个yuv做测试
-            break
+        # if(m > 0) : #这里只拿一个yuv做测试
+        #     break
+        # 获取第一组yuv，每一组应当包含四个yuv，对应的是同一个点云GOF，高清纹理/高清占用/低清纹理/低清占用
         hr_tex_yuv_path = train_paths_hrtex[m]
         hr_occ_yuv_path = train_paths_hrocc[m]
         lr_tex_yuv_path = train_paths_lrtex[m]
@@ -42,6 +44,7 @@ def train(paths):
         lr_tex_y = my.get_n_Ychannel(lr_tex_yuv_path)
         lr_occ_y = my.get_n_Ychannel(lr_occ_yuv_path)
 
+        # 每个完整的GOF中有32帧点云，对应64帧纹理和32帧占用，处理GOF中的每一帧
         for n in range(0,len(hr_tex_y)) : 
             hr_tex = hr_tex_y[n] # 提取一帧hr_tex
             lr_tex = lr_tex_y[n] # 提取一帧lr_tex
@@ -92,10 +95,10 @@ def eval(paths):
     train_paths_lrtex = paths[2]
     train_paths_lrocc = paths[3]
 
-    idx = 0
+    idx = 0 # 这里的idx是数据集的索引编号
     for m in range(len(train_paths_hrtex)):
-        if(m > 0) : #这里只拿一个yuv做测试
-            break
+        # if(m > 0) : #这里只拿一个yuv做测试
+        #     break
         hr_tex_yuv_path = train_paths_hrtex[m]
         hr_occ_yuv_path = train_paths_hrocc[m]
         lr_tex_yuv_path = train_paths_lrtex[m]
@@ -152,11 +155,10 @@ if __name__ == '__main__':
     parser.add_argument('--lrtex-yuv-path', type=str, required=True)
     parser.add_argument('--lrocc-yuv-path', type=str, required=True)
     parser.add_argument('--output-path', type=str, required=True) # 这里指示生成的h5文件的地址
-    parser.add_argument('--dataset-type', type=str, required=True)
+    parser.add_argument('--dataset-type', type=str, required=True) # 这里指示生成训练集or验证集
     parser.add_argument('--patch-size', type=int, default=256)
     parser.add_argument('--stride', type=int, default=100)
     # parser.add_argument('--scale', type=int, default=2)
-    
     # parser.add_argument('--eval', action='store_true') # 当'--eval'出现时，将其状态设为true
     
     # 从默认的地方获取数据，并写入默认的数据结构
