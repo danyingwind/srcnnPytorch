@@ -14,6 +14,26 @@ def get_Ychannel(f_stream,frame_width, frame_height, patch_size=2):
 
     return dataY
 
+#---读取1帧的YUV分量---
+def get_YUVchannel(f_stream,frame_width, frame_height, patch_size=2):
+    y_buf = f_stream.read(frame_width * frame_height)
+    u_buf = f_stream.read(frame_width * frame_height//4)
+    v_buf = f_stream.read(frame_width * frame_height//4)
+
+    dataY = np.frombuffer(y_buf, dtype = np.uint8)
+    dataY = dataY.reshape(frame_height, frame_width) 
+    dataY = dataY.astype(np.uint8)
+
+    dataU = np.frombuffer(u_buf, dtype = np.uint8)
+    dataU = dataU.reshape((int)(frame_height/2),(int)(frame_width/2)) 
+    dataU = dataU.astype(np.uint8)
+
+    dataV = np.frombuffer(v_buf, dtype = np.uint8)
+    dataV = dataV.reshape((int)(frame_height/2), (int)(frame_width/2)) 
+    dataV = dataV.astype(np.uint8)
+
+    return dataY,dataU,dataV
+
 #---读取n帧的Y分量---
 def get_n_Ychannel(yuv_path,patch_size = 2):
     frame_num, frame_width, frame_height = get_yuv_paras(yuv_path)
@@ -23,6 +43,20 @@ def get_n_Ychannel(yuv_path,patch_size = 2):
         Y = get_Ychannel(f_stream, frame_width, frame_height)
         Y_data.append(Y)
     return Y_data
+
+#---读取n帧的YUV分量---
+def get_n_YUVchannel(yuv_path,patch_size = 2):
+    frame_num, frame_width, frame_height = get_yuv_paras(yuv_path)
+    f_stream = open(yuv_path, 'rb')
+    Y_data = []
+    U_data = []
+    V_data = []
+    for k in range(frame_num):
+        Y,U,V = get_YUVchannel(f_stream, frame_width, frame_height)
+        Y_data.append(Y)
+        U_data.append(U)
+        V_data.append(V)
+    return Y_data,U_data,V_data
 
 # 用于通过最近邻居插值法对array进行放大
 def ndarray_nearest_neighbour_scaling(label, new_h, new_w):
@@ -106,6 +140,24 @@ def get_yuv_paras(path):
         elif(path_split[6] == "occupancy"):
             frame_num = 12
     return [frame_num,frame_width,frame_height]
+
+# def writeyuv(Ylist, Ulist, Vlist, TotalFrames, FilenameOut, FrameSizeY):
+def writeyuv(Ylist, Ulist, Vlist, TotalFrames, FilenameOut):
+    with open(FilenameOut, 'wb+') as f:
+        for frameidx in range(TotalFrames):
+            # FrameYbuf = FrameSizeY
+            # FrameUVbuf = FrameSizeY / 4
+            # Ybufstart = FrameYbuf * frameidx
+            # Ybufend = FrameYbuf * (frameidx + 1)
+            #for Yindex in range(Ybufstart, Ybufend):
+            f.write(Ylist[frameidx])
+            # UVbufstart = FrameUVbuf * frameidx
+            # UVbufend = FrameUVbuf * (frameidx + 1)
+            # for Uindex in range(UVbufstart, UVbufend):
+            f.write(Ulist[frameidx])
+            # for Vindex in range(UVbufstart, UVbufend):
+            f.write(Vlist[frameidx])
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
