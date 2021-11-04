@@ -139,6 +139,11 @@ def get_yuv_paras(path):
             frame_num = 24
         elif(path_split[6] == "occupancy"):
             frame_num = 12
+    elif(GOF_num == 'p'): # 当采用单帧测试时，命名为GOFp
+        if(path_split[6] == "texture"):
+            frame_num = 2
+        elif(path_split[6] == "occupancy"):
+            frame_num = 1
     return [frame_num,frame_width,frame_height]
 
 # def writeyuv(Ylist, Ulist, Vlist, TotalFrames, FilenameOut, FrameSizeY):
