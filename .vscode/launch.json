@@ -19,9 +19,9 @@
     */
 
 
-    // 用于进行YUV读取和写入的测试
+    // 用于进行YUV读取和写入的测试，针对read_write_YUV.py
     /*
-    
+    "--input","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture/seq23/S23C2AIR05_F300_GOF0_texture_1280x1280_8bit_p420.yuv","--output","/home/wangdanying/SRCNN/yuv_to_get_dataset/1111.yuv"
     */
 
     "version": "0.2.0",
@@ -32,7 +32,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": [ "--input","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture/seq23/S23C2AIR05_F300_GOF0_texture_1280x1280_8bit_p420.yuv","--output","/home/wangdanying/SRCNN/yuv_to_get_dataset/1111.yuv" ]
+            "args": [  ]
         }
     ]
 }

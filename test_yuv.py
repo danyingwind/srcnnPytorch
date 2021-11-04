@@ -45,10 +45,15 @@ if __name__ == '__main__':
     out_y = []
     psnr_total = 0
     psnr_valid = 0
+    psnr_lr = 0
     im_cnt = len(lr_tex_y) # 记录帧数
     for n in range(0,im_cnt) : 
+        # print("正在处理第{}帧".format(n))
         lr_tex = lr_tex_y[n] # 提取一帧lr_tex
         lr_occ = lr_occ_y[int(n/2)] # 提取一帧lr_occ
+        hr_tex = hr_tex_y[n] # 提取一帧hr_tex
+        
+
         
         # 数据类型转换
         lr_tex = np.array(lr_tex).astype(np.float32)
@@ -65,16 +70,32 @@ if __name__ == '__main__':
         y_lr = torch.from_numpy(y_lr).to(device)
         # print("y_lr.shape = ", y_lr.shape)
 
+        y_lr = y_lr.unsqueeze(0)
         with torch.no_grad(): # torch.no_grad() 是一个上下文管理器,表示执行计算，但该计算不会在反向传播中被记录。
             preds = model(y_lr).clamp(0.0, 1.0) 
 
-        # psnr = calc_psnr(y_hr, preds)
-        # print('PSNR: {:.2f}'.format(psnr))# 格式化输出的函数
-        out_y.append(preds)
-        psnr_total += calc_psnr(y_lr, preds)
-        psnr_valid += calc_psnr(y_lr*lr_occ, preds*lr_occ)
+
+        preds = preds.data.cpu().numpy() # 转换成numpy
+        preds_tex_y = preds[0][0]
+        if n == 1:
+            print("preds.shape = ", preds.shape)
+            print("preds_tex_y.shape = ", preds_tex_y.shape)
+            print("hr_tex.shape = ", hr_tex.shape)
+            print("lr_occ.shape = ", lr_occ.shape)
+
+        lr_tex = lr_tex / 255.
+        hr_tex = hr_tex / 255.
+        psnr_total += calc_psnr(torch.from_numpy(preds_tex_y),torch.from_numpy(hr_tex) )
+        psnr_valid += calc_psnr(torch.from_numpy(preds_tex_y*lr_occ),torch.from_numpy(hr_tex*lr_occ) )
+        psnr_lr += calc_psnr(torch.from_numpy(lr_tex),torch.from_numpy(hr_tex) )
+        preds_tex_y = preds_tex_y*255
+        preds_tex_y = preds_tex_y.astype(np.uint8)
+        out_y.append(preds_tex_y)
+        
+
     print('PSNR hr2preds_total（采用lr的occ，但训练用的是hr的occ）: {:.2f}'.format(psnr_total/im_cnt))# 格式化输出的函数
     print('PSNR psnr_valid: {:.2f}'.format(psnr_valid/im_cnt))# 格式化输出的函数
+    print('PSNR psnr_lr: {:.2f}'.format(psnr_lr/im_cnt))# 格式化输出的函数
 
 
     # transpose用于进行数据位置的变换，https://blog.csdn.net/weixin_44438120/article/details/106761480
@@ -82,7 +103,19 @@ if __name__ == '__main__':
     # output = np.array([preds, ycbcr_lr[..., 1], ycbcr_lr[..., 2]]).transpose([1, 2, 0])
 
     # 把YUV通道的数据组合起来生成YUV文件
+    # print("进行数据类型转化")
+    # out_y = out_y.data.cpu().numpy()
+    print("开始进行文件写入")
+    print("shape of out_y[0] = ",out_y[0].shape)
+    print("shape of lr_tex_u[0] = ",lr_tex_u[0].shape)
+    print("shape of lr_tex_v[0] = ",lr_tex_v[0].shape)
+    print("len of out_y = ",len(out_y))
+    print("len of lr_tex_u = ",len(lr_tex_u))
+    print("len of lr_tex_v = ",len(lr_tex_v))
+    print("img_cnt = ",im_cnt)
     frame_num,frame_width,frame_height = my.get_yuv_paras(args.lr_tex_yuv_path) # 这里只要frame_num
+    print(frame_num,frame_width,frame_height)
+    
     my.writeyuv(out_y,lr_tex_u,lr_tex_v, frame_num, args.outputLR_path)
     my.writeyuv(out_y,hr_tex_u,hr_tex_v, frame_num, args.outputHR_path)
     print("完成处理")
