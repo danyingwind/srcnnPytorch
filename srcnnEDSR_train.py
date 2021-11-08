@@ -60,10 +60,10 @@ if __name__ == '__main__':
     
     # 用于指定model加载到某个设备
     model = srcnnEDSR(args).to(device)
-    # # 均方损失函数
-    # criterion = nn.MSELoss()
+    # 均方损失函数
+    criterion = nn.MSELoss()
     
-    criterion = nn.L1Loss()
+    # criterion = nn.L1Loss()
     # 优化器的作用就是根据网络反向传播的梯度信息来更新网络的参数，降低最后计算得到的loss值，正式开始训练前需要将网络的参数放到优化器里面
     # 用'params'来指定需要优化的参数项，除了model.conv3.parameters()，都采用args.lr作为学习率 
     
