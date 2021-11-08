@@ -19,8 +19,6 @@ from srcnnEDSR_option import args
 
 
 if __name__ == '__main__':
-    
-
     # 用于加速神经网络的训练
     cudnn.benchmark = True
     device = torch.device('cuda:2' if torch.cuda.is_available() else 'cpu')
@@ -31,19 +29,21 @@ if __name__ == '__main__':
     
     # 用于指定model加载到某个设备
     model = srcnnEDSR(args).to(device)
-    # 均方损失函数
-    criterion = nn.MSELoss()
+    # # 均方损失函数
+    # criterion = nn.MSELoss()
     
+    criterion = nn.L1Loss()
     # 优化器的作用就是根据网络反向传播的梯度信息来更新网络的参数，降低最后计算得到的loss值，正式开始训练前需要将网络的参数放到优化器里面
     # 用'params'来指定需要优化的参数项，除了model.conv3.parameters()，都采用args.lr作为学习率 
     
     ##TODO:================================================================================
     # 这里的optimizer需要专门设置一下
-    optimizer = optim.Adam([
-        {'params': model.conv1.parameters()},
-        {'params': model.conv2.parameters()},
-        {'params': model.conv3.parameters(), 'lr': args.lr * 0.1}
-    ], lr=args.lr)
+    # optimizer = optim.Adam([
+    #     {'params': model.conv1.parameters()},
+    #     {'params': model.conv2.parameters()},
+    #     {'params': model.conv3.parameters(), 'lr': args.lr * 0.1}
+    # ], lr=args.lr)
+    optimizer = optim.Adam([0.9, 0.999], lr = args.lr)
     ##END==================================================================================
 
     # 初始化train数据集
@@ -112,7 +112,7 @@ if __name__ == '__main__':
                 # 往tensorlog中写数据，用于tensorboard监测
                 counter = counter + 1
                 if counter % 100 == 0:
-                    writer.add_scalar("loss_100item", loss, counter/100)
+                    writer.add_scalar("srcnnEDSR_loss_100item", loss, counter/100)
 
 
 
@@ -168,7 +168,7 @@ if __name__ == '__main__':
             # print("计算psnr。。。。。")
             epoch_psnr.update(calc_psnr(preds_valid, labels_valid), len(inputs))
 
-        writer.add_scalar("psnr_1epoch", epoch_psnr.avg, epoch)
+        writer.add_scalar("srcnnEDSR_psnr_1epoch", epoch_psnr.avg, epoch)
         print('eval psnr: {:.2f}'.format(epoch_psnr.avg))
 
         # 权值更新

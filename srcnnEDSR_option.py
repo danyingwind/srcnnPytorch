@@ -14,6 +14,12 @@ parser.add_argument('--num_resblocks', type=int, default=32)
 parser.add_argument('--num_feats', type=int, default=64)
 parser.add_argument('--num_colors', type=int, default=2)
 parser.add_argument('--seed', type=int, default=123)
+parser.add_argument('--betas', type=tuple, default=(0.9, 0.999),
+                    help='ADAM beta')
+parser.add_argument('--epsilon', type=float, default=1e-8,
+                    help='ADAM epsilon for numerical stability')
+parser.add_argument('--weight_decay', type=float, default=0,
+                    help='weight decay')                    
 args = parser.parse_args()
 # 生成outputs_dir的路径名
 args.outputs_dir = os.path.join(args.outputs_dir, 'x{}'.format(args.scale))
