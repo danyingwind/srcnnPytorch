@@ -1,5 +1,5 @@
 from torch import nn
-import commonEDSR as common
+import srcnnEDSR_common as common
 import torch.nn as nn
 
 

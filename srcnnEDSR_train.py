@@ -11,14 +11,41 @@ from torch.utils.data.dataloader import DataLoader
 from tqdm import tqdm #进度提示信息
 from torch.utils.tensorboard import SummaryWriter #tensorlog输出，用于后续tensorboard监测
 
-from models import SRCNN
 from datasets import TrainDataset, EvalDataset
-from srcnnEDSR_model import srcnnEDSR
 from utils import AverageMeter, calc_psnr
 from srcnnEDSR_option import args
+from srcnnEDSR_model import srcnnEDSR
+
+
 
 
 if __name__ == '__main__':
+    # 用来设置训练时的参数
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--train-file', type=str, default="/home/wangdanying/SRCNN/trainset_seq23GOF0")
+    parser.add_argument('--eval-file', type=str, default="/home/wangdanying/SRCNN/evalset_seq23GOF0")
+    parser.add_argument('--outputs-dir', type=str, default="/home/wangdanying/SRCNN/srcnnPytorch/debug/trainLog")
+    parser.add_argument('--scale', type=int, default=1)
+    parser.add_argument('--lr', type=float, default=1e-4)
+    parser.add_argument('--batch-size', type=int, default=16)
+    parser.add_argument('--num-epochs', type=int, default=400)
+    parser.add_argument('--num-workers', type=int, default=8)
+    parser.add_argument('--num_resblocks', type=int, default=3)
+    parser.add_argument('--num_feats', type=int, default=6)
+    parser.add_argument('--num_colors', type=int, default=2)
+    parser.add_argument('--seed', type=int, default=123)
+    parser.add_argument('--betas', type=tuple, default=(0.9, 0.999),
+                        help='ADAM beta')
+    parser.add_argument('--epsilon', type=float, default=1e-8,
+                        help='ADAM epsilon for numerical stability')
+    parser.add_argument('--weight_decay', type=float, default=0,
+                        help='weight decay')                    
+    args = parser.parse_args()
+    # 生成outputs_dir的路径名
+    args.outputs_dir = os.path.join(args.outputs_dir, 'x{}'.format(args.scale))
+    #判断文件是否存在，不存在则创建一个
+    if not os.path.exists(args.outputs_dir):
+        os.makedirs(args.outputs_dir)
     # 用于加速神经网络的训练
     cudnn.benchmark = True
     device = torch.device('cuda:2' if torch.cuda.is_available() else 'cpu')
@@ -43,7 +70,9 @@ if __name__ == '__main__':
     #     {'params': model.conv2.parameters()},
     #     {'params': model.conv3.parameters(), 'lr': args.lr * 0.1}
     # ], lr=args.lr)
-    optimizer = optim.Adam([0.9, 0.999], lr = args.lr)
+    # optimizer = optim.Adam([0.9, 0.999], lr = args.lr)
+    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, betas=args.betas)
+
     ##END==================================================================================
 
     # 初始化train数据集

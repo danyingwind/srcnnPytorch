@@ -2,9 +2,9 @@ import argparse
 import os
 # 用来设置训练时的参数
 parser = argparse.ArgumentParser()
-parser.add_argument('--train-file', type=str, required=True)
-parser.add_argument('--eval-file', type=str, required=True)
-parser.add_argument('--outputs-dir', type=str, required=True)
+parser.add_argument('--train-file', type=str, default="/home/wangdanying/SRCNN/trainset_seq23GOF0")
+parser.add_argument('--eval-file', type=str, default="/home/wangdanying/SRCNN/evalset_seq23GOF0")
+parser.add_argument('--outputs-dir', type=str, default="/home/wangdanying/SRCNN/srcnnPytorch/debug/trainLog")
 parser.add_argument('--scale', type=int, default=1)
 parser.add_argument('--lr', type=float, default=1e-4)
 parser.add_argument('--batch-size', type=int, default=16)
