@@ -7,6 +7,7 @@ import my_utils as my
 
 from models import SRCNN
 from utils import calc_psnr
+from srcnnEDSR_model import srcnnEDSR
 
 
 if __name__ == '__main__':
@@ -18,16 +19,32 @@ if __name__ == '__main__':
     parser.add_argument('--hr-tex-yuv-path', type=str, required=True)
     parser.add_argument('--outputLR-path', type=str, required=True)
     parser.add_argument('--outputHR-path', type=str, required=True)
+
+    # 初始化模型需要的参数
+    parser.add_argument('--num_resblocks', type=int, default=3)
+    parser.add_argument('--num_feats', type=int, default=6)
+    parser.add_argument('--num_colors', type=int, default=2)
+    parser.add_argument('--scale', type=int, default=1)
     args = parser.parse_args()
 
     cudnn.benchmark = True
     device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
 
-    model = SRCNN().to(device) # 用于指定model加载到某个设备
+    model = srcnnEDSR(args).to(device) # 用于指定model加载到某个设备
 
     state_dict = model.state_dict() # state_dict()是一个类似字典的结构，用于储存需要学习的参数和偏移值
 
+    for key in state_dict.keys():
+        print(key)
+    
+    weights = torch.load(args.weights_file, map_location=lambda storage, loc: storage)
+
+    for key in weights:
+        print(key)
+
+    
     # torch.load(f, map_location=lambda storage, loc: storage)把f加载到GPU 1中，下述过程用于加载模型参数
+    # map_location=lambda storage, loc: storage。表示模型是CPU，预加载的训练参数却是GPU，那么需要这样
     # items()以列表返回可遍历的(键, 值) 元组数组
     for n, p in torch.load(args.weights_file, map_location=lambda storage, loc: storage).items():
         if n in state_dict.keys():
