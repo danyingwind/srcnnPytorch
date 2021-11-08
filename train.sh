@@ -1,4 +1,2 @@
 python cleanlog.py
-# python train.py "--train-file" "/home/wangdanying/SRCNN/trainset_seq23GOF0" "--eval-file" "/home/wangdanying/SRCNN/evalset_seq23GOF0" "--outputs-dir" "/home/wangdanying/SRCNN/srcnnPytorch/debug/trainLog"
-python train.py "--weights-file" "/home/wangdanying/SRCNN/srcnnPytorch/debug/trainLog/x1/best.pth" "--lr-tex-yuv-path" "/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/texture/seq23/S23C2AIR01_F300_GOF9_texture_rec_1280x1280_8bit_p420.yuv" "--lr-occ-yuv-path" "/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/occupancy/seq23/S23C2AIR01_F300_GOF9_occupancy_rec_320x320_8bit_p420.yuv" "--hr-tex-yuv-path" "/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture/seq23/S23C2AIR05_F300_GOF9_texture_1280x1280_8bit_p420.yuv" "--outputLR-path" "/home/wangdanying/SRCNN/yuv_to_get_dataset/1111.yuv" "--outputHR-path" ""
-
+python train.py "--train-file" "/home/wangdanying/SRCNN/trainset_seq23GOF0" "--eval-file" "/home/wangdanying/SRCNN/evalset_seq23GOF0" "--outputs-dir" "/home/wangdanying/SRCNN/srcnnPytorch/debug/trainLog"
