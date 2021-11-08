@@ -13,30 +13,13 @@ from torch.utils.tensorboard import SummaryWriter #tensorlog输出，用于后�
 
 from models import SRCNN
 from datasets import TrainDataset, EvalDataset
+from srcnnEDSR_model import srcnnEDSR
 from utils import AverageMeter, calc_psnr
+from srcnnEDSR_option import args
 
 
 if __name__ == '__main__':
-
-    # 用来设置训练时的参数
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--train-file', type=str, required=True)
-    parser.add_argument('--eval-file', type=str, required=True)
-    parser.add_argument('--outputs-dir', type=str, required=True)
-    parser.add_argument('--scale', type=int, default=1)
-    parser.add_argument('--lr', type=float, default=1e-4)
-    parser.add_argument('--batch-size', type=int, default=16)
-    parser.add_argument('--num-epochs', type=int, default=400)
-    parser.add_argument('--num-workers', type=int, default=8)
-    parser.add_argument('--seed', type=int, default=123)
-    args = parser.parse_args()
-
-    # 生成outputs_dir的路径名
-    args.outputs_dir = os.path.join(args.outputs_dir, 'x{}'.format(args.scale))
-
-    #判断文件是否存在，不存在则创建一个
-    if not os.path.exists(args.outputs_dir):
-        os.makedirs(args.outputs_dir)
+    
 
     # 用于加速神经网络的训练
     cudnn.benchmark = True
@@ -47,17 +30,21 @@ if __name__ == '__main__':
     torch.manual_seed(args.seed)
     
     # 用于指定model加载到某个设备
-    model = SRCNN().to(device)
+    model = srcnnEDSR(args).to(device)
     # 均方损失函数
     criterion = nn.MSELoss()
     
     # 优化器的作用就是根据网络反向传播的梯度信息来更新网络的参数，降低最后计算得到的loss值，正式开始训练前需要将网络的参数放到优化器里面
     # 用'params'来指定需要优化的参数项，除了model.conv3.parameters()，都采用args.lr作为学习率 
+    
+    ##TODO:================================================================================
+    # 这里的optimizer需要专门设置一下
     optimizer = optim.Adam([
         {'params': model.conv1.parameters()},
         {'params': model.conv2.parameters()},
         {'params': model.conv3.parameters(), 'lr': args.lr * 0.1}
     ], lr=args.lr)
+    ##END==================================================================================
 
     # 初始化train数据集
     train_dataset = TrainDataset(args.train_file)
