@@ -11,8 +11,10 @@ class srcnnEDSR(nn.Module):
         super(srcnnEDSR, self).__init__()
         n_resblocks = args.n_resblocks # resblock的数量
         n_feats = args.n_feats # feature map的数量
+        n_colors = 2 # 这里表示颜色通道数量，原本是对应颜色的三通道，根据自己的定义直接设为2通道，不使用args.n_color
         kernel_size = 3  # 卷积核的大小
-        scale = args.scale[0] # 来自args的参数，wangdanying这里应当改为1
+        # scale = args.scale[0]
+        scale = 1 # 来自args的参数，wangdanying这里应当改为1
         act = nn.ReLU(True) 
         self.sub_mean = common.MeanShift(args.rgb_range) # RGB的最大值
         self.add_mean = common.MeanShift(args.rgb_range, sign=1)
@@ -23,23 +25,23 @@ class srcnnEDSR(nn.Module):
 
         # define head module
         # 模型的开头部分，1个卷积模块
-        m_head = [conv(args.n_colors, n_feats, kernel_size)] #颜色通道数，特征图数量，卷积核尺寸
+        m_head = [conv(n_colors, n_feats, kernel_size)] #颜色通道数，特征图数量，卷积核尺寸
 
         # define body module
         # 模型的中间部分，n个残差模块
         m_body = [
             common.ResBlock(
-                conv, n_feats, kernel_size, act=act, res_scale=args.res_scale
+                conv, n_feats, kernel_size, act=act, res_scale=1
             ) for _ in range(n_resblocks)
         ]
         # 模型的中间部分，1个卷积模块
-        m_body.append(conv(n_feats, n_feats, kernel_size))
+        m_body.append(conv(n_feats, n_feats, kernel_size)) # conv的参数是输入输出的通道数量和卷积核大小
 
         # define tail module
         #模型的结尾部分，上采样模块+卷积模块
         m_tail = [
             common.Upsampler(conv, scale, n_feats, act=False),
-            conv(n_feats, args.n_colors, kernel_size)
+            conv(n_feats, n_colors, kernel_size)
         ]
 
         # 这里是给各个模块进行重命名
@@ -63,22 +65,4 @@ class srcnnEDSR(nn.Module):
 
         return x 
 
-    def load_state_dict(self, state_dict, strict=True):
-        own_state = self.state_dict()
-        for name, param in state_dict.items():
-            if name in own_state:
-                if isinstance(param, nn.Parameter):
-                    param = param.data
-                try:
-                    own_state[name].copy_(param)
-                except Exception:
-                    if name.find('tail') == -1:
-                        raise RuntimeError('While copying the parameter named {}, '
-                                           'whose dimensions in the model are {} and '
-                                           'whose dimensions in the checkpoint are {}.'
-                                           .format(name, own_state[name].size(), param.size()))
-            elif strict:
-                if name.find('tail') == -1:
-                    raise KeyError('unexpected key "{}" in state_dict'
-                                   .format(name))
 
