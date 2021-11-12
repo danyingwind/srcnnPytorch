@@ -37,8 +37,8 @@ if __name__ == '__main__':
     parser.add_argument('--weight_decay', type=float, default=0,
                         help='weight decay')                
     # 初始化模型需要的参数
-    parser.add_argument('--num_resblocks', type=int, default=4)
-    parser.add_argument('--num_feats', type=int, default=8)
+    parser.add_argument('--num_resblocks', type=int, default=8)
+    parser.add_argument('--num_feats', type=int, default=16)
     parser.add_argument('--num_colors', type=int, default=2)
     parser.add_argument('--scale', type=int, default=1)
     
