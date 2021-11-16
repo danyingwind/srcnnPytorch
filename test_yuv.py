@@ -21,8 +21,8 @@ if __name__ == '__main__':
     parser.add_argument('--outputHR-path', type=str, required=True)
 
     # 初始化模型需要的参数
-    parser.add_argument('--num_resblocks', type=int, default=3)
-    parser.add_argument('--num_feats', type=int, default=6)
+    parser.add_argument('--num_resblocks', type=int, default=8) # 需要修改
+    parser.add_argument('--num_feats', type=int, default=16) # 需要修改
     parser.add_argument('--num_colors', type=int, default=2)
     parser.add_argument('--scale', type=int, default=1)
     args = parser.parse_args()
@@ -34,13 +34,13 @@ if __name__ == '__main__':
 
     state_dict = model.state_dict() # state_dict()是一个类似字典的结构，用于储存需要学习的参数和偏移值
 
-    for key in state_dict.keys():
-        print(key)
+    # for key in state_dict.keys():
+    #     print(key+", shape = " + str(state_dict[key].shape))
     
     weights = torch.load(args.weights_file, map_location=lambda storage, loc: storage)
 
-    for key in weights:
-        print(key)
+    # for key in weights:
+    #     print(key+", shape = " + str(weights[key].shape))
 
     
     # torch.load(f, map_location=lambda storage, loc: storage)把f加载到GPU 1中，下述过程用于加载模型参数
