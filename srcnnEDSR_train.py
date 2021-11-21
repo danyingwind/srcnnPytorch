@@ -1,5 +1,6 @@
 import argparse
 import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "0, 1, 2, 3"
 import copy
 
 import numpy as np
@@ -52,14 +53,22 @@ if __name__ == '__main__':
         os.makedirs(args.outputs_dir)
     # 用于加速神经网络的训练
     cudnn.benchmark = True
-    device = torch.device('cuda:2' if torch.cuda.is_available() else 'cpu')
-    #device = torch.device('cpu')
+
+    # 多卡训练
+    # model = srcnnEDSR(args)
+    # device_ids = [0, 1, 2, 3]
+    # model = torch.nn.DataParallel(srcnnEDSR(args), device_ids=device_ids)
+    
+    model = srcnnEDSR(args)
+    model = nn.DataParallel(model)
+    model = model.cuda()
+    # # 单卡训练
+    # device = torch.device('cuda:2' if torch.cuda.is_available() else 'cpu')
+    # # 用于指定model加载到某个设备
+    # model = srcnnEDSR(args).to(device)
 
     # 为CPU设置种子用于生成随机数，以使得结果是确定的
     torch.manual_seed(args.seed)
-    
-    # 用于指定model加载到某个设备
-    model = srcnnEDSR(args).to(device)
     # 均方损失函数
     criterion = nn.MSELoss()
     
@@ -124,11 +133,17 @@ if __name__ == '__main__':
                 # print("加载数据")
                 # 读取数据的时候是以元组的形式获得了低/高分辨率的图像
                 inputs, labels = data
-                # 这里表示将获得的inputs/labels数据拷贝一份到device上去，之后的运算都在GPU上运行
-                inputs = inputs.to(device)
-                labels = labels.to(device)
-                # print("inputs.shape=", inputs.shape)
-                # print("labels.shape=", labels.shape)
+
+                # 单卡训练
+                # # 这里表示将获得的inputs/labels数据拷贝一份到device上去，之后的运算都在GPU上运行
+                # inputs = inputs.to(device)
+                # labels = labels.to(device)
+                # # print("inputs.shape=", inputs.shape)
+                # # print("labels.shape=", labels.shape)
+
+                # 多卡训练
+                inputs = inputs.cuda()
+                labels = labels.cuda()
 
                 preds = model(inputs) # 计算输出
 
@@ -175,8 +190,13 @@ if __name__ == '__main__':
             # print("进入循环。。。。。")
             inputs, labels = data
 
-            inputs = inputs.to(device)
-            labels = labels.to(device)
+            # 单卡训练
+            # inputs = inputs.to(device)
+            # labels = labels.to(device)
+            
+            # 多卡训练
+            inputs = inputs.cuda()
+            labels = labels.cuda()
 
             # torch.no_grad() 是一个上下文管理器，该语句覆盖的部分将不会追踪梯度。
             # print("提取数据。。。。。")

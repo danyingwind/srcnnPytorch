@@ -41,12 +41,15 @@ class srcnnEDSR(nn.Module):
         # 模型的中间部分，1个卷积模块
         m_body.append(conv(n_feats, n_feats, kernel_size)) # conv的参数是输入输出的通道数量和卷积核大小
 
-        # define tail module
-        #模型的结尾部分，上采样模块+卷积模块
-        m_tail = [
-            common.Upsampler(conv, scale, n_feats, act=False),
-            conv(n_feats, n_colors, kernel_size)
-        ]
+        # # define tail module
+        # #模型的结尾部分，上采样模块+卷积模块
+        # m_tail = [
+        #     common.Upsampler(conv, scale, n_feats, act=False),
+        #     conv(n_feats, n_colors, kernel_size)
+        # ]
+
+        #去除模型结尾的上采样模块
+        m_tail = [conv(n_feats, n_colors, kernel_size)]
 
         # 这里是给各个模块进行重命名
         self.head = nn.Sequential(*m_head) # nn.Sequential是torch中的一个顺序容器
