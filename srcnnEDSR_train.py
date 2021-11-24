@@ -17,7 +17,20 @@ from utils import AverageMeter, calc_psnr
 from srcnnEDSR_option import args
 from srcnnEDSR_model import srcnnEDSR
 
-
+kwargs={'map_location':lambda storage, loc: storage.cuda([0,1,2,3])}
+def load_GPUS(model,model_path,kwargs):
+    state_dict = torch.load(model_path,**kwargs)
+    # create new OrderedDict that does not contain `module.`
+    from collections import OrderedDict
+    new_state_dict = OrderedDict()
+    for k, v in state_dict.items():
+        # name = k[7:] # remove `module.`
+        name = k
+        new_state_dict[name] = v
+        print(name)
+    # load params
+    model.load_state_dict(new_state_dict)
+    return model
 
 
 if __name__ == '__main__':
@@ -62,6 +75,8 @@ if __name__ == '__main__':
     model = srcnnEDSR(args)
     model = nn.DataParallel(model)
     model = model.cuda()
+    load_GPUS(model,"/home/wangdanying/SRCNN/srcnnPytorch/WDYbestparas/srcnnEDSR_res8_feats16_noUpsample_GOF0-3.pth",kwargs)
+
     # # 单卡训练
     # device = torch.device('cuda:2' if torch.cuda.is_available() else 'cpu')
     # # 用于指定model加载到某个设备
