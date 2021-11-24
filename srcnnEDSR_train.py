@@ -160,8 +160,8 @@ if __name__ == '__main__':
                 
                 # 往tensorlog中写数据，用于tensorboard监测
                 counter = counter + 1
-                if counter % 100 == 0:
-                    writer.add_scalar("srcnnEDSR_loss_100item", loss, counter/100)
+                # if counter % 100 == 0:
+                #     writer.add_scalar("srcnnEDSR_loss_100item", loss, counter/100)
 
 
 
