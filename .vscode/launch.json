@@ -3,7 +3,7 @@
     // 悬停以查看现有属性的描述。
     // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
 
-    // 用于生成eval_set的debug
+    // 用于生成2通道eval_set的debug
     /*
     "--hrtex-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture","--hrocc-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/occupancy","--lrtex-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/texture","--lrocc-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/occupancy", "--output-path","/home/wangdanying/SRCNN/evalset_seq23GOF0-2","--dataset-type", "eval"
     */
@@ -13,9 +13,14 @@
     "--train-file", "/home/wangdanying/SRCNN/srcnn_paper使用的数据/train_data/91-image_x2.h5", "--eval-file", "/home/wangdanying/SRCNN/evalset_seq23GOF0", "--outputs-dir", "/home/wangdanying/SRCNN/srcnnPytorch/debug/trainLog" 
     */
 
-    // 用于生成train_set的debug
+    // 用于生成2通道train_set的debug
     /*
     "--hrtex-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture","--hrocc-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/occupancy","--lrtex-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/texture","--lrocc-yuv-path","/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/occupancy", "--output-path","/home/wangdanying/SRCNN/trainset_seq23GOF0-test","--dataset-type", "train"
+    */
+
+    // 用于生成1通道train_set的debug
+    /*
+    "--hrtex-yuv-path","/home/wangdanying/SRCNN/yuv_to_test_network/R5_yuv/texture","--lrtex-yuv-path","/home/wangdanying/SRCNN/yuv_to_test_networkt/R1_yuv_rec/texture", "--output-path","/date/wangdanying/SRCNN_dataset/trainset_1channel_fromTestNetwork","--dataset-type", "train"
     */
 
 
@@ -32,7 +37,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": [  ]
+            "args": [ "--hrtex-yuv-path","/home/wangdanying/SRCNN/yuv_to_test_network/R5_yuv/texture","--lrtex-yuv-path","/home/wangdanying/SRCNN/yuv_to_test_network/R1_yuv_rec/texture", "--output-path","/date/wangdanying/SRCNN_dataset/trainset_1channel_fromTestNetwork","--dataset-type", "train" ]
         }
     ]
 }

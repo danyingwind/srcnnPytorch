@@ -1,6 +1,6 @@
 import os
 
-mypath = "/home/wangdanying/SRCNN/srcnnPytorch/debug/tensorLog"
+mypath = "/home/wangdanying/SRCNN/srcnnPytorch/debug/trainLog/x1"
 #mypath = "/home/wangdanying/SRCNN/srcnnPytorch/debug/1"
 trainlogs = []
 for root, dirs, files in os.walk(mypath):
