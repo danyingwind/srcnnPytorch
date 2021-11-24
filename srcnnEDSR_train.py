@@ -1,6 +1,6 @@
 import argparse
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "0, 1, 2, 3"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1, 2, 3, 5"
 import copy
 
 import numpy as np
@@ -110,7 +110,8 @@ if __name__ == '__main__':
     # https://www.cnblogs.com/ziytong/p/11776459.html?ivk_sa=1024320u
     best_weights = copy.deepcopy(model.state_dict()) # 深拷贝
     best_epoch = 0
-    best_psnr = 0.0
+    # best_psnr = 0.0
+    best_psnr = 35.92 # 这里储存只用GOF0-3训练时的最佳psnr
 
     writer = SummaryWriter('/home/wangdanying/SRCNN/srcnnPytorch/debug/tensorLog')
 
