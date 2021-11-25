@@ -1,0 +1,1 @@
+python prepare_from_path_1channel.py "--hrtex-yuv-path" "/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture" "--lrtex-yuv-path" "/home/wangdanying/SRCNN/yuv_to_get_dataset/R1_yuv_rec/texture"  "--output-path" "/date/wangdanying/SRCNN_dataset/evalset_1channel" "--dataset-type" "eval"

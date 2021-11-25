@@ -1,6 +1,5 @@
 import argparse
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "1, 2, 3, 5"
 import copy
 
 import numpy as np
@@ -12,30 +11,32 @@ from torch.utils.data.dataloader import DataLoader
 from tqdm import tqdm #进度提示信息
 from torch.utils.tensorboard import SummaryWriter #tensorlog输出，用于后续tensorboard监测
 
+import sys
+sys.path.append("..")
 from datasets import TrainDataset, EvalDataset
 from utils import AverageMeter, calc_psnr
 from srcnnEDSR_option import args
-from srcnnEDSR_model import srcnnEDSR
+from model.srcnnEDSR_model_Upsample import srcnnEDSR
 
-kwargs={'map_location':lambda storage, loc: storage.cuda([0,1,2,3])}
-def load_GPUS(model,model_path,kwargs):
-    state_dict = torch.load(model_path,**kwargs)
-    # create new OrderedDict that does not contain `module.`
-    from collections import OrderedDict
-    new_state_dict = OrderedDict()
-    for k, v in state_dict.items():
-        new_state_dict[k] = v
-        print(k)
-    # load params
-    model.load_state_dict(new_state_dict)
-    return model
+# kwargs={'map_location':lambda storage, loc: storage.cuda([0,1,2,3])}
+# def load_GPUS(model,model_path,kwargs):
+#     state_dict = torch.load(model_path,**kwargs)
+#     # create new OrderedDict that does not contain `module.`
+#     from collections import OrderedDict
+#     new_state_dict = OrderedDict()
+#     for k, v in state_dict.items():
+#         new_state_dict[k] = v
+#         print(k)
+#     # load params
+#     model.load_state_dict(new_state_dict)
+#     return model
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--train-file', type=str, default="/home/wangdanying/SRCNN/trainset_seq23GOF0")
-    parser.add_argument('--eval-file', type=str, default="/home/wangdanying/SRCNN/evalset_seq23GOF0")
-    parser.add_argument('--outputs-dir', type=str, default="/home/wangdanying/SRCNN/srcnnPytorch/debug/trainLog")
+    parser.add_argument('--train-file', type=str, required=True)
+    parser.add_argument('--eval-file', type=str, required=True)
+    parser.add_argument('--outputs-dir', type=str, required=True)
     parser.add_argument('--lr', type=float, default=1e-4)
     parser.add_argument('--batch-size', type=int, default=16)
     parser.add_argument('--num-epochs', type=int, default=400)
@@ -54,14 +55,15 @@ if __name__ == '__main__':
     parser.add_argument('--scale', type=int, default=1)
     
     args = parser.parse_args()
-    args.outputs_dir = os.path.join(args.outputs_dir, 'x{}'.format(args.scale))
+    args.outputs_dir = os.path.join(args.outputs_dir)
     if not os.path.exists(args.outputs_dir):
         os.makedirs(args.outputs_dir)
     cudnn.benchmark = True
     
-    model = srcnnEDSR(args)
-    model = nn.DataParallel(model)
-    model = model.cuda()
+    device = torch.device('cuda:4' if torch.cuda.is_available() else 'cpu')
+    # 用于指定model加载到某个设备
+    model = srcnnEDSR(args).to(device)
+    # 均方损失函数
 
     # 用于加载之前训练的参数
     # load_GPUS(model,"/home/wangdanying/SRCNN/srcnnPytorch/WDYbestparas/srcnnEDSR_res8_feats16_noUpsample_GOF0-3.pth",kwargs)
@@ -82,7 +84,7 @@ if __name__ == '__main__':
     best_weights = copy.deepcopy(model.state_dict()) # 使用deepcopy可以保证有list嵌套时，子list的修改之间是相互独立的
     best_epoch = 0
     best_psnr = 0.0
-    writer = SummaryWriter('/home/wangdanying/SRCNN/srcnnPytorch/debug/tensorLog')
+    writer = SummaryWriter('/home/wangdanying/SRCNN/srcnnPytorch/debug/tensorLog/EDSR_1channel_Upsample')
     
     for epoch in range(args.num_epochs):
         ################## 训练集 ###################
@@ -97,9 +99,11 @@ if __name__ == '__main__':
                 # print("加载数据")
                 # 读取数据的时候是以元组的形式获得了低/高分辨率的图像
                 inputs, labels = data
-                # 多卡训练
-                inputs = inputs.cuda()
-                labels = labels.cuda()
+                inputs = inputs.to(device)
+                labels = labels.to(device)
+                # # 多卡训练
+                # inputs = inputs.cuda()
+                # labels = labels.cuda()
 
                 preds = model(inputs) 
                 loss = criterion(preds, labels) 
@@ -129,10 +133,11 @@ if __name__ == '__main__':
         for data in eval_dataloader:
             # print("进入循环。。。。。")
             inputs, labels = data
-            
-            # 多卡训练
-            inputs = inputs.cuda()
-            labels = labels.cuda()
+            inputs = inputs.to(device)
+            labels = labels.to(device)
+            # # 多卡训练
+            # inputs = inputs.cuda()
+            # labels = labels.cuda()
 
             # torch.no_grad() 是一个上下文管理器，该语句覆盖的部分将不会追踪梯度。
             # print("提取数据。。。。。")
@@ -145,17 +150,17 @@ if __name__ == '__main__':
                 # print("preds.shape=",preds.shape)
                 # print("labels.shape=",labels.shape)
 
-                preds_valid = preds[:][0]
-                labels_valid = labels[:][0]
+                # preds_valid = preds[:][0]
+                # labels_valid = labels[:][0]
                 # print("preds[:][0].shape=", preds_valid.shape )
                 # print("labels[:][0].shape=", labels_valid.shape )
                 
 
             # 根据AverageMeter()中定义的update函数更新psnr相关的值
             # print("计算psnr。。。。。")
-            epoch_psnr.update(calc_psnr(preds_valid, labels_valid), len(inputs))
+            epoch_psnr.update(calc_psnr(preds, labels), len(inputs))
 
-        writer.add_scalar("srcnnEDSR_psnr_1epoch", epoch_psnr.avg, epoch)
+        writer.add_scalar("EDSR_1channel_Upsample", epoch_psnr.avg, epoch)
         print('eval psnr: {:.2f}'.format(epoch_psnr.avg))
 
         # 权值更新

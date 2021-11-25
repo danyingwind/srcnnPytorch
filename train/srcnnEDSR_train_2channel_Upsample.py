@@ -1,6 +1,6 @@
 import argparse
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "1, 2, 3, 5"
+# os.environ["CUDA_VISIBLE_DEVICES"] = "1, 2, 3, 5"
 import copy
 
 import numpy as np
@@ -12,33 +12,35 @@ from torch.utils.data.dataloader import DataLoader
 from tqdm import tqdm #进度提示信息
 from torch.utils.tensorboard import SummaryWriter #tensorlog输出，用于后续tensorboard监测
 
+import sys
+sys.path.append("..")
 from datasets import TrainDataset, EvalDataset
 from utils import AverageMeter, calc_psnr
 from srcnnEDSR_option import args
-from srcnnEDSR_model import srcnnEDSR
+from model.srcnnEDSR_model_Upsample import srcnnEDSR
 
-kwargs={'map_location':lambda storage, loc: storage.cuda([0,1,2,3])}
-def load_GPUS(model,model_path,kwargs):
-    state_dict = torch.load(model_path,**kwargs)
-    # create new OrderedDict that does not contain `module.`
-    from collections import OrderedDict
-    new_state_dict = OrderedDict()
-    for k, v in state_dict.items():
-        # name = k[7:] # remove `module.`
-        name = k
-        new_state_dict[name] = v
-        print(name)
-    # load params
-    model.load_state_dict(new_state_dict)
-    return model
+# kwargs={'map_location':lambda storage, loc: storage.cuda([0,1,2,3])}
+# def load_GPUS(model,model_path,kwargs):
+#     state_dict = torch.load(model_path,**kwargs)
+#     # create new OrderedDict that does not contain `module.`
+#     from collections import OrderedDict
+#     new_state_dict = OrderedDict()
+#     for k, v in state_dict.items():
+#         # name = k[7:] # remove `module.`
+#         name = k
+#         new_state_dict[name] = v
+#         print(name)
+#     # load params
+#     model.load_state_dict(new_state_dict)
+#     return model
 
 
 if __name__ == '__main__':
     # 用来设置训练时的参数
     parser = argparse.ArgumentParser()
-    parser.add_argument('--train-file', type=str, default="/home/wangdanying/SRCNN/trainset_seq23GOF0")
-    parser.add_argument('--eval-file', type=str, default="/home/wangdanying/SRCNN/evalset_seq23GOF0")
-    parser.add_argument('--outputs-dir', type=str, default="/home/wangdanying/SRCNN/srcnnPytorch/debug/trainLog")
+    parser.add_argument('--train-file', type=str, required=True)
+    parser.add_argument('--eval-file', type=str, required=True)
+    parser.add_argument('--outputs-dir', type=str, required=True)
     parser.add_argument('--lr', type=float, default=1e-4)
     parser.add_argument('--batch-size', type=int, default=16)
     parser.add_argument('--num-epochs', type=int, default=400)
@@ -55,10 +57,8 @@ if __name__ == '__main__':
     parser.add_argument('--num_feats', type=int, default=16)
     parser.add_argument('--num_colors', type=int, default=2)
     parser.add_argument('--scale', type=int, default=1)
-    
-    
-    
     args = parser.parse_args()
+
     # 生成outputs_dir的路径名
     args.outputs_dir = os.path.join(args.outputs_dir, 'x{}'.format(args.scale))
     #判断文件是否存在，不存在则创建一个
@@ -66,21 +66,17 @@ if __name__ == '__main__':
         os.makedirs(args.outputs_dir)
     # 用于加速神经网络的训练
     cudnn.benchmark = True
-
+    
     # 多卡训练
     # model = srcnnEDSR(args)
-    # device_ids = [0, 1, 2, 3]
-    # model = torch.nn.DataParallel(srcnnEDSR(args), device_ids=device_ids)
-    
-    model = srcnnEDSR(args)
-    model = nn.DataParallel(model)
-    model = model.cuda()
-    load_GPUS(model,"/home/wangdanying/SRCNN/srcnnPytorch/WDYbestparas/srcnnEDSR_res8_feats16_noUpsample_GOF0-3.pth",kwargs)
+    # model = nn.DataParallel(model)
+    # model = model.cuda()
+    # load_GPUS(model,"/home/wangdanying/SRCNN/srcnnPytorch/WDYbestparas/srcnnEDSR_res8_feats16_noUpsample_GOF0-3.pth",kwargs)
 
-    # # 单卡训练
-    # device = torch.device('cuda:2' if torch.cuda.is_available() else 'cpu')
-    # # 用于指定model加载到某个设备
-    # model = srcnnEDSR(args).to(device)
+    # 单卡训练
+    device = torch.device('cuda:5' if torch.cuda.is_available() else 'cpu')
+    # 用于指定model加载到某个设备
+    model = srcnnEDSR(args).to(device)
 
     # 为CPU设置种子用于生成随机数，以使得结果是确定的
     torch.manual_seed(args.seed)
@@ -125,10 +121,9 @@ if __name__ == '__main__':
     # https://www.cnblogs.com/ziytong/p/11776459.html?ivk_sa=1024320u
     best_weights = copy.deepcopy(model.state_dict()) # 深拷贝
     best_epoch = 0
-    # best_psnr = 0.0
-    best_psnr = 35.92 # 这里储存只用GOF0-3训练时的最佳psnr
+    best_psnr = 0.0
 
-    writer = SummaryWriter('/home/wangdanying/SRCNN/srcnnPytorch/debug/tensorLog')
+    writer = SummaryWriter('/home/wangdanying/SRCNN/srcnnPytorch/debug/tensorLog/EDSR_2channel_Upsample')
 
     # 用于固定频率的tensorlog输出
     counter = 0
@@ -152,14 +147,14 @@ if __name__ == '__main__':
 
                 # 单卡训练
                 # # 这里表示将获得的inputs/labels数据拷贝一份到device上去，之后的运算都在GPU上运行
-                # inputs = inputs.to(device)
-                # labels = labels.to(device)
+                inputs = inputs.to(device)
+                labels = labels.to(device)
                 # # print("inputs.shape=", inputs.shape)
                 # # print("labels.shape=", labels.shape)
 
-                # 多卡训练
-                inputs = inputs.cuda()
-                labels = labels.cuda()
+                # # 多卡训练
+                # inputs = inputs.cuda()
+                # labels = labels.cuda()
 
                 preds = model(inputs) # 计算输出
 
@@ -207,12 +202,12 @@ if __name__ == '__main__':
             inputs, labels = data
 
             # 单卡训练
-            # inputs = inputs.to(device)
-            # labels = labels.to(device)
+            inputs = inputs.to(device)
+            labels = labels.to(device)
             
-            # 多卡训练
-            inputs = inputs.cuda()
-            labels = labels.cuda()
+            # # 多卡训练
+            # inputs = inputs.cuda()
+            # labels = labels.cuda()
 
             # torch.no_grad() 是一个上下文管理器，该语句覆盖的部分将不会追踪梯度。
             # print("提取数据。。。。。")
@@ -225,10 +220,10 @@ if __name__ == '__main__':
                 # print("preds.shape=",preds.shape)
                 # print("labels.shape=",labels.shape)
 
-                # preds_valid = preds[:][0]*labels[:][1]
-                # labels_valid = labels[:][0]*labels[:][1]
-                preds_valid = preds[:][0]
-                labels_valid = labels[:][0]
+                preds_valid = preds[:][0]*labels[:][1]
+                labels_valid = labels[:][0]*labels[:][1]
+                # preds_valid = preds[:][0]
+                # labels_valid = labels[:][0]
                 # print("preds[:][0].shape=", preds_valid.shape )
                 # print("labels[:][0].shape=", labels_valid.shape )
                 
@@ -237,7 +232,7 @@ if __name__ == '__main__':
             # print("计算psnr。。。。。")
             epoch_psnr.update(calc_psnr(preds_valid, labels_valid), len(inputs))
 
-        writer.add_scalar("srcnnEDSR_psnr_1epoch", epoch_psnr.avg, epoch)
+        writer.add_scalar("EDSR_2channel_Upsample", epoch_psnr.avg, epoch)
         print('eval psnr: {:.2f}'.format(epoch_psnr.avg))
 
         # 权值更新

@@ -122,10 +122,10 @@ if __name__ == '__main__':
     
 
     if args.dataset_type == "train":
-        # train([train_paths_hrtex,train_paths_lrtex])
-        train([test_paths_hrtex,test_paths_lrtex])
+        train([train_paths_hrtex,train_paths_lrtex])
+        # train([test_paths_hrtex,test_paths_lrtex])
     elif args.dataset_type == "eval":
-        # eval([eval_paths_hrtex,eval_paths_lrtex])
-        eval([test_paths_hrtex,test_paths_lrtex])
+        eval([eval_paths_hrtex,eval_paths_lrtex])
+        # eval([test_paths_hrtex,test_paths_lrtex])
     elif args.dataset_type == "test":
         eval([test_paths_hrtex,test_paths_lrtex])
