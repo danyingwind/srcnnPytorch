@@ -1,9 +1,9 @@
 import argparse
 import torch
-
+from time import *
 import torch.backends.cudnn as cudnn
 import numpy as np
-
+from time import *
 import sys
 sys.path.append("..")
 import my_utils as my
@@ -55,6 +55,7 @@ if __name__ == '__main__':
     psnr_valid = 0
     psnr_lr = 0
     im_cnt = len(hr_tex_y) # 记录帧数
+    begin_time = time()
     for n in range(0,im_cnt) : 
         # print("正在处理第{}帧".format(n))
         lr_tex = hr_tex_y[n] # 提取一帧lr_tex
@@ -91,13 +92,13 @@ if __name__ == '__main__':
         preds_tex_y = preds_tex_y*255
         preds_tex_y = preds_tex_y.astype(np.uint8)
         out_y.append(preds_tex_y)
-        
+    end_time = time()     
 
     # print('PSNR hr2preds_total（采用lr的occ，但训练用的是hr的occ）: {:.2f}'.format(psnr_total/im_cnt))# 格式化输出的函数
     print('PSNR psnr_total: {:.2f}'.format(psnr_total/im_cnt))# 格式化输出的函数
     print('PSNR psnr_valid: {:.2f}'.format(psnr_valid/im_cnt))# 格式化输出的函数
     print('PSNR psnr_lr: {:.2f}'.format(psnr_lr/im_cnt))# 格式化输出的函数
-
+    print('模块运行时间 = ', end_time-begin_time)
 
     # transpose用于进行数据位置的变换，https://blog.csdn.net/weixin_44438120/article/details/106761480
     # 这里还需要在读入数据的时候保存uv，用来合成yuv

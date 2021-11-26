@@ -1,5 +1,5 @@
 import argparse
-
+from time import *
 import torch
 import torch.backends.cudnn as cudnn
 import numpy as np
