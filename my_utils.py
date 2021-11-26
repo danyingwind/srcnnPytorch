@@ -114,35 +114,44 @@ def get_path_lists(yuv_path):
     # '/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture/seq23/S23C2AIR05_F300_GOF0_texture_1280x1280_8bit_p420.yuv'
     # return path_lists
 
-# 输入为'/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture/seq23/S23C2AIR05_F300_GOF0_texture_1280x1280_8bit_p420.yuv'
+# 输入为情况1'/home/wangdanying/SRCNN/yuv_to_get_dataset/R5_yuv/texture/seq23/S23C2AIR05_F300_GOF0_texture_1280x1280_8bit_p420.yuv'
+# 或者为情况2'~/S23C2AIR01_F1_GOF0_texture_rec_1280x1280_8bit_p420.yuv'
+# 或者为情况3'~/S23C2AIR01_F1_dec_GOF0_texture_rec_1280x1280_8bit_p420.yuv'
 # 获取frame_num, frame_width, frame_height的信息
 def get_yuv_paras(path):
     path_split = path.split("/")
-    yuv_name = path_split[-1]
+    yuv_name = path_split[-1] 
     yuv_name_split = yuv_name.split("_")
-    GOF_num = yuv_name_split[2][3]
+    if(yuv_name_split[2][0] == 'G'): # 针对情况1，2
+        yuv_type = yuv_name_split[3]
+        GOF_num = yuv_name_split[2][3]
+    elif(yuv_name_split[3][0] == 'G'): # 针对情况3
+        GOF_num = yuv_name_split[3][3]
+        yuv_type = yuv_name_split[4]
     frame_paras = [0,0]
-    if(yuv_name_split[4] == "rec"):
-        frame_paras = yuv_name_split[5].split("x")
-    else :
+    if(yuv_name_split[5] == "8bit"): # 针对情况1
         frame_paras = yuv_name_split[4].split("x")
+    elif(yuv_name_split[6] == "8bit"): # 针对情况2
+        frame_paras = yuv_name_split[5].split("x")
+    elif(yuv_name_split[7] == "8bit"): # 针对情况3
+        frame_paras = yuv_name_split[6].split("x")   
     frame_width = int(frame_paras[0])
     frame_height = int(frame_paras[1])
     frame_num = 0
     if(GOF_num >= '0' and GOF_num <= '8'):
-        if(path_split[6] == "texture"):
+        if(yuv_type == "texture"):
             frame_num = 64
-        elif(path_split[6] == "occupancy"):
+        elif(yuv_type == "occupancy"):
             frame_num = 32
     elif(GOF_num == '9'):
-        if(path_split[6] == "texture"):
+        if(yuv_type == "texture"):
             frame_num = 24
-        elif(path_split[6] == "occupancy"):
+        elif(yuv_type == "occupancy"):
             frame_num = 12
     elif(GOF_num == 'p'): # 当采用单帧测试时，命名为GOFp
-        if(path_split[6] == "texture"):
+        if(yuv_type == "texture"):
             frame_num = 2
-        elif(path_split[6] == "occupancy"):
+        elif(yuv_type == "occupancy"):
             frame_num = 1
     return [frame_num,frame_width,frame_height]
 

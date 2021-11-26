@@ -3,10 +3,10 @@ import torch
 
 import torch.backends.cudnn as cudnn
 import numpy as np
-import my_utils as my
 
 import sys
 sys.path.append("..")
+import my_utils as my
 from model.srcnnEDSR_model_noUpsample import srcnnEDSR
 from utils import calc_psnr
 
@@ -19,7 +19,7 @@ if __name__ == '__main__':
     parser.add_argument('--lr-tex-yuv-path', type=str, required=True)
     parser.add_argument('--lr-occ-yuv-path', type=str, required=True)
     parser.add_argument('--hr-tex-yuv-path', type=str, required=True)
-    parser.add_argument('--outputLR-path', type=str, required=True)
+    # parser.add_argument('--outputLR-path', type=str, required=True)
     parser.add_argument('--outputHR-path', type=str, required=True)
     # 初始化模型需要的参数
     parser.add_argument('--num_resblocks', type=int, default=8) # 需要修改
@@ -77,11 +77,11 @@ if __name__ == '__main__':
 
         preds = preds.data.cpu().numpy() # 转换成numpy
         preds_tex_y = preds[0][0]
-        if n == 1:
-            print("preds.shape = ", preds.shape)
-            print("preds_tex_y.shape = ", preds_tex_y.shape)
-            print("hr_tex.shape = ", hr_tex.shape)
-            print("lr_occ.shape = ", lr_occ.shape)
+        # if n == 1:
+        #     print("preds.shape = ", preds.shape)
+        #     print("preds_tex_y.shape = ", preds_tex_y.shape)
+        #     print("hr_tex.shape = ", hr_tex.shape)
+        #     print("lr_occ.shape = ", lr_occ.shape)
 
         lr_tex = lr_tex / 255.
         hr_tex = hr_tex / 255.
