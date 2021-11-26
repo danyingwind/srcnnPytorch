@@ -3,10 +3,10 @@ import torch
 
 import torch.backends.cudnn as cudnn
 import numpy as np
-import my_utils as my
 
 import sys
 sys.path.append("..")
+import my_utils as my
 from model.srcnnEDSR_model_noUpsample import srcnnEDSR
 from utils import calc_psnr
 

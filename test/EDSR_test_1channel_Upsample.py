@@ -3,10 +3,10 @@ import torch
 
 import torch.backends.cudnn as cudnn
 import numpy as np
-import my_utils as my
 
 import sys
 sys.path.append("..")
+import my_utils as my
 from model.srcnnEDSR_model_Upsample import srcnnEDSR
 from utils import calc_psnr
 
@@ -17,6 +17,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--weights-file', type=str, required=True)
     parser.add_argument('--num_colors', type=int, default=1)
+    parser.add_argument('--scale', type=int, default=1)
     parser.add_argument('--lr-tex-yuv-path', type=str, required=True)
     parser.add_argument('--hr-tex-yuv-path', type=str, required=True)
     parser.add_argument('--outputHR-path', type=str, required=True)
