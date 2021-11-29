@@ -37,6 +37,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
+            "cwd": "/home/wangdanying/SRCNN/srcnnPytorch/test",
             "args": [  ]
         }
     ]
