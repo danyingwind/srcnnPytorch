@@ -28,16 +28,18 @@ def process(args,lr_tex_yuv_path,lr_occ_yuv_path,hr_tex_yuv_path,outputHR_path):
                 raise KeyError(n)
         model.eval()
         # 注意该函数的使用，受到路径名称的限制，所以需要路径名符合某一格式，对应的数据已经储存在yuv_to_test_network文件夹中
+        lr_tex_y,lr_tex_u,lr_tex_v = my.get_n_YUVchannel(args.lr_tex_yuv_path)
         hr_tex_y,hr_tex_u,hr_tex_v = my.get_n_YUVchannel(args.hr_tex_yuv_path)
         lr_occ_y = my.get_n_Ychannel(args.lr_occ_yuv_path)
         out_y = []
         psnr_total = 0
-        psnr_valid = 0
         psnr_lr = 0
+        psnr_valid = 0
+        psnr_valid_lr = 0
         im_cnt = len(hr_tex_y) # 记录帧数
         begin_time = time()
         for n in range(0,im_cnt) : 
-            lr_tex = hr_tex_y[n] # 提取一帧lr_tex
+            lr_tex = lr_tex_y[n] # 提取一帧lr_tex
             lr_occ = lr_occ_y[int(n/2)] # 提取一帧lr_occ
             hr_tex = hr_tex_y[n] # 提取一帧hr_tex
             # 数据类型转换
@@ -61,6 +63,7 @@ def process(args,lr_tex_yuv_path,lr_occ_yuv_path,hr_tex_yuv_path,outputHR_path):
             psnr_total += calc_psnr(torch.from_numpy(preds_tex_y),torch.from_numpy(hr_tex) )
             psnr_valid += calc_psnr(torch.from_numpy(preds_tex_y*lr_occ),torch.from_numpy(hr_tex*lr_occ) )
             psnr_lr += calc_psnr(torch.from_numpy(lr_tex),torch.from_numpy(hr_tex) )
+            psnr_valid_lr += calc_psnr(torch.from_numpy(lr_tex*lr_occ),torch.from_numpy(hr_tex*lr_occ) )
             preds_tex_y = preds_tex_y*255
             preds_tex_y = preds_tex_y.astype(np.uint8)
             out_y.append(preds_tex_y)
@@ -68,8 +71,9 @@ def process(args,lr_tex_yuv_path,lr_occ_yuv_path,hr_tex_yuv_path,outputHR_path):
 
         print('处理的文件：',lr_tex_yuv_path[i].split('/')[-1].split('_')[0])
         print('PSNR psnr_total: {:.2f}'.format(psnr_total/im_cnt))# 格式化输出的函数
+        print('PSNR psnr_total_lr: {:.2f}'.format(psnr_lr/im_cnt))# 格式化输出的函数
         print('PSNR psnr_valid: {:.2f}'.format(psnr_valid/im_cnt))# 格式化输出的函数
-        print('PSNR psnr_lr: {:.2f}'.format(psnr_lr/im_cnt))# 格式化输出的函数
+        print('PSNR psnr_valid_lr: {:.2f}'.format(psnr_valid_lr/im_cnt))# 格式化输出的函数
         print('模块运行时间 = ', end_time-begin_time)
         frame_num,frame_width,frame_height = my.get_yuv_paras(args.lr_tex_yuv_path) # 这里只要frame_num
         my.writeyuv(out_y,hr_tex_u,hr_tex_v, frame_num, args.outputHR_path)

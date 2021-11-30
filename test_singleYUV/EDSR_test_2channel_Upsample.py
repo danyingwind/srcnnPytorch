@@ -3,11 +3,11 @@ import torch
 from time import *
 import torch.backends.cudnn as cudnn
 import numpy as np
-from time import *
+
 import sys
 sys.path.append("..")
 import my_utils as my
-from model.srcnnEDSR_model_noUpsample import srcnnEDSR
+from model.srcnnEDSR_model_Upsample import srcnnEDSR
 from utils import calc_psnr
 
 
@@ -16,6 +16,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--weights-file', type=str, required=True)
     parser.add_argument('--num_colors', type=int, default=2)
+    parser.add_argument('--scale', type=int, default=1)
     parser.add_argument('--lr-tex-yuv-path', type=str, required=True)
     parser.add_argument('--lr-occ-yuv-path', type=str, required=True)
     parser.add_argument('--hr-tex-yuv-path', type=str, required=True)
@@ -47,7 +48,7 @@ if __name__ == '__main__':
     
     # 注意该函数的使用，受到路径名称的限制，所以需要路径名符合某一格式，对应的数据已经储存在yuv_to_test_network文件夹中
     # # 低清晰度拼接
-    # lr_tex_y,lr_tex_u,lr_tex_v = my.get_n_YUVchannel(args.lr_tex_yuv_path)
+    lr_tex_y,lr_tex_u,lr_tex_v = my.get_n_YUVchannel(args.lr_tex_yuv_path)
     hr_tex_y,hr_tex_u,hr_tex_v = my.get_n_YUVchannel(args.hr_tex_yuv_path)
     lr_occ_y = my.get_n_Ychannel(args.lr_occ_yuv_path)
     out_y = []
@@ -58,7 +59,7 @@ if __name__ == '__main__':
     begin_time = time()
     for n in range(0,im_cnt) : 
         # print("正在处理第{}帧".format(n))
-        lr_tex = hr_tex_y[n] # 提取一帧lr_tex
+        lr_tex = lr_tex_y[n] # 提取一帧lr_tex
         lr_occ = lr_occ_y[int(n/2)] # 提取一帧lr_occ
         hr_tex = hr_tex_y[n] # 提取一帧hr_tex
         # 数据类型转换
@@ -92,7 +93,7 @@ if __name__ == '__main__':
         preds_tex_y = preds_tex_y*255
         preds_tex_y = preds_tex_y.astype(np.uint8)
         out_y.append(preds_tex_y)
-    end_time = time()     
+    end_time = time()         
 
     # print('PSNR hr2preds_total（采用lr的occ，但训练用的是hr的occ）: {:.2f}'.format(psnr_total/im_cnt))# 格式化输出的函数
     print('PSNR psnr_total: {:.2f}'.format(psnr_total/im_cnt))# 格式化输出的函数
