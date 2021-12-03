@@ -37,7 +37,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "cwd": "/home/wangdanying/SRCNN/logextract",
+            // "cwd": "/home/wangdanying/SRCNN/logextract", // 用于指定运行代码时进入的文件夹
             "args": [  ]
         }
     ]
