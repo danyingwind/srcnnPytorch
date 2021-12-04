@@ -1,0 +1,25 @@
+处理的文件： S23C2AIR01
+PSNR psnr_total: 33.54
+PSNR psnr_total_lr: 33.41
+PSNR psnr_valid: 34.53
+PSNR psnr_valid_lr: 34.53
+模块运行时间 =  13.313327550888062
+处理的文件： S24C2AIR01
+PSNR psnr_total: 37.46
+PSNR psnr_total_lr: 37.26
+PSNR psnr_valid: 38.04
+PSNR psnr_valid_lr: 38.04
+模块运行时间 =  8.764235258102417
+处理的文件： S25C2AIR01
+PSNR psnr_total: 33.11
+PSNR psnr_total_lr: 33.01
+PSNR psnr_valid: 33.43
+PSNR psnr_valid_lr: 33.43
+模块运行时间 =  10.111760377883911
+处理的文件： S26C2AIR01
+PSNR psnr_total: 32.09
+PSNR psnr_total_lr: 32.00
+PSNR psnr_valid: 32.39
+PSNR psnr_valid_lr: 32.39
+模块运行时间 =  9.868771076202393
+处理完毕！

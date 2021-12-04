@@ -18,7 +18,7 @@ def process(args,lr_tex_yuv_path,hr_tex_yuv_path,outputHR_path,lr_occ_yuv_paths)
         args.outputHR_path = outputHR_path[i]
         lr_occ_yuv_path = lr_occ_yuv_paths[i]
         cudnn.benchmark = True
-        device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
+        device = torch.device('cuda:2' if torch.cuda.is_available() else 'cpu')
         model = srcnnEDSR(args).to(device) # 用于指定model加载到某个设备
         state_dict = model.state_dict() # state_dict()是一个类似字典的结构，用于储存需要学习的参数
         # weights = torch.load(args.weights_file, map_location=lambda storage, loc: storage)
@@ -58,7 +58,14 @@ def process(args,lr_tex_yuv_path,hr_tex_yuv_path,outputHR_path,lr_occ_yuv_paths)
             lr_occ = my.ndarray_nearest_neighbour_scaling(lr_occ, len(lr_tex), len(lr_tex[0]))
 
             preds = preds.data.cpu().numpy() # 转换成numpy
-            preds_tex_y = preds[0][0]
+            lr_occ_1  = lr_occ # 对应占用图的有效部分
+            lr_occ_0 = lr_occ_1 * (-1) + 1 # 对应占用图的无效部分
+            # # 直接把处理过的整幅图用于点云重建
+            # preds_tex_y = preds[0][0]
+            # 只把处理后的无效部分进行替换，有效部分使用原来的
+            y0 = preds[0][0]
+            y1 = y_lr.data.cpu().numpy()
+            preds_tex_y = y0*lr_occ_0+ y1*lr_occ_1
             lr_tex = lr_tex / 255.
             hr_tex = hr_tex / 255.
             psnr_total += calc_psnr(torch.from_numpy(preds_tex_y),torch.from_numpy(hr_tex) )
@@ -94,10 +101,10 @@ if __name__ == '__main__':
     parser.add_argument('--num_feats', type=int, default=16) # 需要修改
     args = parser.parse_args()
 
-    lr_tex_yuv_path=["/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq23/r1/S23C2AIR01_F32_GOF0_texture_rec_1280x1280_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq24/r1/S24C2AIR01_F32_GOF0_texture_rec_1280x1344_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq25/r1/S25C2AIR01_F32_GOF0_texture_rec_1280x1280_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq26/r1/S26C2AIR01_F32_GOF0_texture_rec_1280x1296_8bit_p420.yuv"]
-    lr_occ_yuv_paths = ["/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq23/r1/S23C2AIR01_F32_GOF0_occupancy_rec_320x320_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq24/r1/S24C2AIR01_F32_GOF0_occupancy_rec_320x336_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq25/r1/S25C2AIR01_F32_GOF0_occupancy_rec_320x320_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq26/r1/S26C2AIR01_F32_GOF0_occupancy_rec_320x324_8bit_p420.yuv"]
-    hr_tex_yuv_path=["/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq23/r1/S23C2AIR01_F32_GOF0_texture_1280x1280_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq24/r1/S24C2AIR01_F32_GOF0_texture_1280x1344_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq25/r1/S25C2AIR01_F32_GOF0_texture_1280x1280_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq26/r5/S26C2AIR05_F32_GOF0_texture_1280x1296_8bit_p420.yuv"]
-    outputHR_path=['/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/EDSR_test_1channel_Upsample/seq23/r1_process/S23C2AIR01_F32_dec_GOF0_texture_rec_1280x1280_8bit_p420.yuv','/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/EDSR_test_1channel_Upsample/seq24/r1_process/S24C2AIR01_F32_dec_GOF0_texture_rec_1280x1344_8bit_p420.yuv','/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/EDSR_test_1channel_Upsample/seq25/r1_process/S25C2AIR01_F32_dec_GOF0_texture_rec_1280x1280_8bit_p420.yuv','/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/EDSR_test_1channel_Upsample/seq26/r1_process/S26C2AIR01_F32_dec_GOF0_texture_rec_1280x1296_8bit_p420.yuv']
+    lr_tex_yuv_path=["/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/testbefore1130/seq23/r1/S23C2AIR01_F32_GOF0_texture_rec_1280x1280_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/testbefore1130/seq24/r1/S24C2AIR01_F32_GOF0_texture_rec_1280x1344_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/testbefore1130/seq25/r1/S25C2AIR01_F32_GOF0_texture_rec_1280x1280_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/testbefore1130/seq26/r1/S26C2AIR01_F32_GOF0_texture_rec_1280x1296_8bit_p420.yuv"]
+    hr_tex_yuv_path=["/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/testbefore1130/seq23/r1/S23C2AIR01_F32_GOF0_texture_1280x1280_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/testbefore1130/seq24/r1/S24C2AIR01_F32_GOF0_texture_1280x1344_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/testbefore1130/seq25/r1/S25C2AIR01_F32_GOF0_texture_1280x1280_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/testbefore1130/seq26/r5/S26C2AIR05_F32_GOF0_texture_1280x1296_8bit_p420.yuv"]
+    lr_occ_yuv_paths = ["/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/testbefore1130/seq23/r1/S23C2AIR01_F32_GOF0_occupancy_rec_320x320_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/testbefore1130/seq24/r1/S24C2AIR01_F32_GOF0_occupancy_rec_320x336_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/testbefore1130/seq25/r1/S25C2AIR01_F32_GOF0_occupancy_rec_320x320_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/testbefore1130/seq26/r1/S26C2AIR01_F32_GOF0_occupancy_rec_320x324_8bit_p420.yuv"]
+    outputHR_path=['/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test_allnet/EDSR_test_1channel_Upsample/seq23/r1_process/S23C2AIR01_F32_dec_GOF0_texture_rec_1280x1280_8bit_p420.yuv','/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test_allnet/EDSR_test_1channel_Upsample/seq24/r1_process/S24C2AIR01_F32_dec_GOF0_texture_rec_1280x1344_8bit_p420.yuv','/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test_allnet/EDSR_test_1channel_Upsample/seq25/r1_process/S25C2AIR01_F32_dec_GOF0_texture_rec_1280x1280_8bit_p420.yuv','/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test_allnet/EDSR_test_1channel_Upsample/seq26/r1_process/S26C2AIR01_F32_dec_GOF0_texture_rec_1280x1296_8bit_p420.yuv']
 
     process(args,lr_tex_yuv_path,hr_tex_yuv_path,outputHR_path,lr_occ_yuv_paths)
     print("处理完毕！")
