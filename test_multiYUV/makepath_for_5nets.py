@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 seq26_paths_tex_lr = [
     "/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq26/r1/S26C2AIR01_F32_GOF0_texture_rec_1280x1296_8bit_p420.yuv"
 ]
@@ -103,11 +104,23 @@ def make_paths2(input_paths):
 tex_lr = ["/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq23/r1/S23C2AIR01_F32_GOF0_texture_rec_1280x1280_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq24/r1/S24C2AIR01_F32_GOF0_texture_rec_1280x1344_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq25/r1/S25C2AIR01_F32_GOF0_texture_rec_1280x1280_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq26/r1/S26C2AIR01_F32_GOF0_texture_rec_1280x1296_8bit_p420.yuv"]
 
 
+def getPaths(inputPath):
+    paths = []
+    for p in Path(inputPath).iterdir():
+        for s in p.rglob('*.yuv'):  
+            # yield s
+            paths.append(s)
+    paths.sort()
+    # print(len(paths))
+    return paths
+# 这样就可以获取到所有嵌套文件的路径
 
 
 
 if __name__ == '__main__':
-    output_paths = make_paths2(tex_lr)
-    for paths in output_paths:
-        for path in paths:
-            print(path)
+    # output_paths = make_paths2(tex_lr)
+    # for paths in output_paths:
+    #     for path in paths:
+    #         print(path)
+    yuvPaths = getPaths('/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/decyuv_f300')
+    # print('end')

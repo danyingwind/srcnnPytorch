@@ -88,7 +88,7 @@ def process(args,lr_tex_yuv_path,hr_tex_yuv_path,outputHR_path,lr_occ_yuv_paths)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--weights-file', type=str, default="/home/wangdanying/SRCNN/srcnnPytorch/debug/trainLog/EDSR_1channel_noUpsample/epoch_157.pth")
+    parser.add_argument('--weights-file', type=str, default="/home/wangdanying/SRCNN/srcnnPytorch/debug/trainLog/EDSR_1channel_noUpsample/best.pth")
     parser.add_argument('--lr-tex-yuv-path', type=str, default="")
     parser.add_argument('--hr-tex-yuv-path', type=str, default="")
     parser.add_argument('--outputHR-path', type=str, default="")

@@ -90,7 +90,7 @@ def process(args,lr_tex_yuv_path,hr_tex_yuv_path,outputHR_path,lr_occ_yuv_paths)
 if __name__ == '__main__':
     # 这里需要注意，测试的时候，需要输入的是yuv文件，而不是做好的h5数据集
     parser = argparse.ArgumentParser()
-    parser.add_argument('--weights-file', type=str, default="/home/wangdanying/SRCNN/srcnnPytorch/debug/trainLog/EDSR_1channel_Upsample/epoch_160.pth")
+    parser.add_argument('--weights-file', type=str, default="/home/wangdanying/SRCNN/srcnnPytorch/debug/trainLog/EDSR_1channel_Upsample/best.pth")
     parser.add_argument('--scale', type=int, default=1)
     parser.add_argument('--lr-tex-yuv-path', type=str, default="")
     parser.add_argument('--hr-tex-yuv-path', type=str, default="")
