@@ -9,6 +9,7 @@ sys.path.append("..")
 import my_utils as my
 from model.srcnnEDSR_model_noUpsample import srcnnEDSR
 from utils import calc_psnr
+from makepath_for_5nets import getPaths,make_path2
 
 def process(args,lr_tex_yuv_path,hr_tex_yuv_path,outputHR_path,lr_occ_yuv_paths):
     cnt = len(lr_tex_yuv_path)
@@ -91,10 +92,14 @@ if __name__ == '__main__':
     parser.add_argument('--num_feats', type=int, default=16) # 需要修改
     args = parser.parse_args()
 
-    lr_tex_yuv_path=["/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq23/r1/S23C2AIR01_F32_GOF0_texture_rec_1280x1280_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq24/r1/S24C2AIR01_F32_GOF0_texture_rec_1280x1344_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq25/r1/S25C2AIR01_F32_GOF0_texture_rec_1280x1280_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq26/r1/S26C2AIR01_F32_GOF0_texture_rec_1280x1296_8bit_p420.yuv"]
-    lr_occ_yuv_paths = ["/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq23/r1/S23C2AIR01_F32_GOF0_occupancy_rec_320x320_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq24/r1/S24C2AIR01_F32_GOF0_occupancy_rec_320x336_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq25/r1/S25C2AIR01_F32_GOF0_occupancy_rec_320x320_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq26/r1/S26C2AIR01_F32_GOF0_occupancy_rec_320x324_8bit_p420.yuv"]
-    hr_tex_yuv_path=["/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq23/r1/S23C2AIR01_F32_GOF0_texture_1280x1280_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq24/r1/S24C2AIR01_F32_GOF0_texture_1280x1344_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq25/r1/S25C2AIR01_F32_GOF0_texture_1280x1280_8bit_p420.yuv","/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/seq26/r5/S26C2AIR05_F32_GOF0_texture_1280x1296_8bit_p420.yuv"]
-    outputHR_path=['/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/EDSR_test_1channel_noUpsample/seq23/r1_process/S23C2AIR01_F32_dec_GOF0_texture_rec_1280x1280_8bit_p420.yuv','/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/EDSR_test_1channel_noUpsample/seq24/r1_process/S24C2AIR01_F32_dec_GOF0_texture_rec_1280x1344_8bit_p420.yuv','/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/EDSR_test_1channel_noUpsample/seq25/r1_process/S25C2AIR01_F32_dec_GOF0_texture_rec_1280x1280_8bit_p420.yuv','/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/test/EDSR_test_1channel_noUpsample/seq26/r1_process/S26C2AIR01_F32_dec_GOF0_texture_rec_1280x1296_8bit_p420.yuv']
+    lr_tex_path = '/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/decyuv_f300/seq26'
+    hr_tex_path = '/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/encyuv_f300/seq26'
+    lr_occ_path = '/home/wangdanying/VPCC_2021/mpeg-pcc-tmc2/occyuv_f300/seq26'
 
-    process(args,lr_tex_yuv_path,hr_tex_yuv_path,outputHR_path,lr_occ_yuv_paths)
+    lr_tex_yuv_path = getPaths(lr_tex_path)
+    lr_occ_yuv_paths = getPaths(lr_occ_path)
+    hr_tex_yuv_path = getPaths(hr_tex_path)
+    output_path = make_path2(lr_tex_yuv_path)['EDSR_1cha_noUp_4seq']
+
+    process(args,lr_tex_yuv_path,hr_tex_yuv_path,output_path,lr_occ_yuv_paths)
     print("处理完毕！")

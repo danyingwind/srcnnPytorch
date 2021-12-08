@@ -37,7 +37,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "cwd": "/home/wangdanying/SRCNN/logextract",
+            // "cwd": "/home/wangdanying/SRCNN/logextract",
             "args": [  ]
         }
     ]
