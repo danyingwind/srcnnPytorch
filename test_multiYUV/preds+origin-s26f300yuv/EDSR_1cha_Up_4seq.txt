@@ -1,0 +1,241 @@
+处理的文件： S26C2AIR01
+PSNR psnr_total: 32.58
+PSNR psnr_total_lr: 32.65
+PSNR psnr_valid: 32.77
+PSNR psnr_valid_lr: 32.93
+模块运行时间 =  25.923748016357422
+处理的文件： S26C2AIR01
+PSNR psnr_total: 32.30
+PSNR psnr_total_lr: 32.36
+PSNR psnr_valid: 32.49
+PSNR psnr_valid_lr: 32.64
+模块运行时间 =  22.342101335525513
+处理的文件： S26C2AIR01
+PSNR psnr_total: 32.22
+PSNR psnr_total_lr: 32.27
+PSNR psnr_valid: 32.41
+PSNR psnr_valid_lr: 32.55
+模块运行时间 =  21.023237943649292
+处理的文件： S26C2AIR01
+PSNR psnr_total: 32.22
+PSNR psnr_total_lr: 32.28
+PSNR psnr_valid: 32.40
+PSNR psnr_valid_lr: 32.54
+模块运行时间 =  21.195640087127686
+处理的文件： S26C2AIR01
+PSNR psnr_total: 31.99
+PSNR psnr_total_lr: 32.09
+PSNR psnr_valid: 32.16
+PSNR psnr_valid_lr: 32.34
+模块运行时间 =  21.023897647857666
+处理的文件： S26C2AIR01
+PSNR psnr_total: 32.46
+PSNR psnr_total_lr: 32.50
+PSNR psnr_valid: 32.67
+PSNR psnr_valid_lr: 32.80
+模块运行时间 =  21.368462085723877
+处理的文件： S26C2AIR01
+PSNR psnr_total: 32.64
+PSNR psnr_total_lr: 32.69
+PSNR psnr_valid: 32.84
+PSNR psnr_valid_lr: 32.99
+模块运行时间 =  21.628471612930298
+处理的文件： S26C2AIR01
+PSNR psnr_total: 32.10
+PSNR psnr_total_lr: 32.23
+PSNR psnr_valid: 32.27
+PSNR psnr_valid_lr: 32.49
+模块运行时间 =  21.49485182762146
+处理的文件： S26C2AIR01
+PSNR psnr_total: 32.21
+PSNR psnr_total_lr: 32.30
+PSNR psnr_valid: 32.40
+PSNR psnr_valid_lr: 32.58
+模块运行时间 =  21.03444218635559
+处理的文件： S26C2AIR01
+PSNR psnr_total: 31.84
+PSNR psnr_total_lr: 31.96
+PSNR psnr_valid: 32.01
+PSNR psnr_valid_lr: 32.21
+模块运行时间 =  7.791095495223999
+处理的文件： S26C2AIR02
+PSNR psnr_total: 34.40
+PSNR psnr_total_lr: 35.24
+PSNR psnr_valid: 34.55
+PSNR psnr_valid_lr: 35.50
+模块运行时间 =  22.31329035758972
+处理的文件： S26C2AIR02
+PSNR psnr_total: 34.13
+PSNR psnr_total_lr: 34.96
+PSNR psnr_valid: 34.29
+PSNR psnr_valid_lr: 35.21
+模块运行时间 =  21.38035750389099
+处理的文件： S26C2AIR02
+PSNR psnr_total: 34.11
+PSNR psnr_total_lr: 34.90
+PSNR psnr_valid: 34.27
+PSNR psnr_valid_lr: 35.16
+模块运行时间 =  22.417351484298706
+处理的文件： S26C2AIR02
+PSNR psnr_total: 34.05
+PSNR psnr_total_lr: 34.89
+PSNR psnr_valid: 34.19
+PSNR psnr_valid_lr: 35.13
+模块运行时间 =  21.963041305541992
+处理的文件： S26C2AIR02
+PSNR psnr_total: 33.74
+PSNR psnr_total_lr: 34.72
+PSNR psnr_valid: 33.87
+PSNR psnr_valid_lr: 34.95
+模块运行时间 =  22.1383318901062
+处理的文件： S26C2AIR02
+PSNR psnr_total: 34.33
+PSNR psnr_total_lr: 35.09
+PSNR psnr_valid: 34.50
+PSNR psnr_valid_lr: 35.36
+模块运行时间 =  21.105218172073364
+处理的文件： S26C2AIR02
+PSNR psnr_total: 34.52
+PSNR psnr_total_lr: 35.31
+PSNR psnr_valid: 34.68
+PSNR psnr_valid_lr: 35.58
+模块运行时间 =  21.579412937164307
+处理的文件： S26C2AIR02
+PSNR psnr_total: 33.85
+PSNR psnr_total_lr: 34.84
+PSNR psnr_valid: 33.99
+PSNR psnr_valid_lr: 35.07
+模块运行时间 =  22.620569705963135
+处理的文件： S26C2AIR02
+PSNR psnr_total: 34.02
+PSNR psnr_total_lr: 34.91
+PSNR psnr_valid: 34.18
+PSNR psnr_valid_lr: 35.17
+模块运行时间 =  21.279645919799805
+处理的文件： S26C2AIR02
+PSNR psnr_total: 33.60
+PSNR psnr_total_lr: 34.60
+PSNR psnr_valid: 33.73
+PSNR psnr_valid_lr: 34.82
+模块运行时间 =  8.411948919296265
+处理的文件： S26C2AIR03
+PSNR psnr_total: 35.50
+PSNR psnr_total_lr: 38.02
+PSNR psnr_valid: 35.63
+PSNR psnr_valid_lr: 38.28
+模块运行时间 =  21.965391635894775
+处理的文件： S26C2AIR03
+PSNR psnr_total: 35.23
+PSNR psnr_total_lr: 37.75
+PSNR psnr_valid: 35.37
+PSNR psnr_valid_lr: 38.00
+模块运行时间 =  22.698936462402344
+处理的文件： S26C2AIR03
+PSNR psnr_total: 35.23
+PSNR psnr_total_lr: 37.69
+PSNR psnr_valid: 35.37
+PSNR psnr_valid_lr: 37.94
+模块运行时间 =  22.116695404052734
+处理的文件： S26C2AIR03
+PSNR psnr_total: 35.12
+PSNR psnr_total_lr: 37.70
+PSNR psnr_valid: 35.25
+PSNR psnr_valid_lr: 37.93
+模块运行时间 =  21.512186288833618
+处理的文件： S26C2AIR03
+PSNR psnr_total: 34.75
+PSNR psnr_total_lr: 37.59
+PSNR psnr_valid: 34.86
+PSNR psnr_valid_lr: 37.82
+模块运行时间 =  21.511532306671143
+处理的文件： S26C2AIR03
+PSNR psnr_total: 35.47
+PSNR psnr_total_lr: 37.84
+PSNR psnr_valid: 35.62
+PSNR psnr_valid_lr: 38.10
+模块运行时间 =  18.062800884246826
+处理的文件： S26C2AIR03
+PSNR psnr_total: 35.65
+PSNR psnr_total_lr: 38.11
+PSNR psnr_valid: 35.80
+PSNR psnr_valid_lr: 38.37
+模块运行时间 =  17.880906105041504
+处理的文件： S26C2AIR03
+PSNR psnr_total: 34.87
+PSNR psnr_total_lr: 37.62
+PSNR psnr_valid: 34.99
+PSNR psnr_valid_lr: 37.85
+模块运行时间 =  17.103456497192383
+处理的文件： S26C2AIR03
+PSNR psnr_total: 35.11
+PSNR psnr_total_lr: 37.71
+PSNR psnr_valid: 35.24
+PSNR psnr_valid_lr: 37.96
+模块运行时间 =  17.795511722564697
+处理的文件： S26C2AIR03
+PSNR psnr_total: 34.60
+PSNR psnr_total_lr: 37.45
+PSNR psnr_valid: 34.72
+PSNR psnr_valid_lr: 37.67
+模块运行时间 =  6.697040796279907
+处理的文件： S26C2AIR04
+PSNR psnr_total: 36.06
+PSNR psnr_total_lr: 41.23
+PSNR psnr_valid: 36.19
+PSNR psnr_valid_lr: 41.53
+模块运行时间 =  17.131391763687134
+处理的文件： S26C2AIR04
+PSNR psnr_total: 35.80
+PSNR psnr_total_lr: 40.96
+PSNR psnr_valid: 35.93
+PSNR psnr_valid_lr: 41.25
+模块运行时间 =  17.62153935432434
+处理的文件： S26C2AIR04
+PSNR psnr_total: 35.80
+PSNR psnr_total_lr: 40.86
+PSNR psnr_valid: 35.94
+PSNR psnr_valid_lr: 41.14
+模块运行时间 =  18.48680567741394
+处理的文件： S26C2AIR04
+PSNR psnr_total: 35.67
+PSNR psnr_total_lr: 40.93
+PSNR psnr_valid: 35.79
+PSNR psnr_valid_lr: 41.20
+模块运行时间 =  17.535938024520874
+处理的文件： S26C2AIR04
+PSNR psnr_total: 35.24
+PSNR psnr_total_lr: 40.87
+PSNR psnr_valid: 35.35
+PSNR psnr_valid_lr: 41.13
+模块运行时间 =  18.599629402160645
+处理的文件： S26C2AIR04
+PSNR psnr_total: 36.05
+PSNR psnr_total_lr: 40.98
+PSNR psnr_valid: 36.20
+PSNR psnr_valid_lr: 41.27
+模块运行时间 =  18.20622706413269
+处理的文件： S26C2AIR04
+PSNR psnr_total: 36.23
+PSNR psnr_total_lr: 41.26
+PSNR psnr_valid: 36.37
+PSNR psnr_valid_lr: 41.56
+模块运行时间 =  17.44773530960083
+处理的文件： S26C2AIR04
+PSNR psnr_total: 35.40
+PSNR psnr_total_lr: 40.85
+PSNR psnr_valid: 35.52
+PSNR psnr_valid_lr: 41.11
+模块运行时间 =  17.958232641220093
+处理的文件： S26C2AIR04
+PSNR psnr_total: 35.66
+PSNR psnr_total_lr: 40.92
+PSNR psnr_valid: 35.79
+PSNR psnr_valid_lr: 41.21
+模块运行时间 =  18.110086917877197
+处理的文件： S26C2AIR04
+PSNR psnr_total: 35.11
+PSNR psnr_total_lr: 40.76
+PSNR psnr_valid: 35.22
+PSNR psnr_valid_lr: 41.02
+模块运行时间 =  4.813940763473511
+处理完毕！

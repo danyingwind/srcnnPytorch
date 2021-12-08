@@ -99,7 +99,7 @@ if __name__ == '__main__':
     lr_tex_yuv_path = getPaths(lr_tex_path)
     lr_occ_yuv_paths = getPaths(lr_occ_path)
     hr_tex_yuv_path = getPaths(hr_tex_path)
-    output_path = make_path2(lr_tex_yuv_path)['EDSR_1cha_noUp_4seq']
+    output_path = make_path2(lr_tex_yuv_path)['EDSR_test_1channel_noUpsample']
 
     process(args,lr_tex_yuv_path,hr_tex_yuv_path,output_path,lr_occ_yuv_paths)
     print("处理完毕！")
